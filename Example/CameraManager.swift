@@ -30,6 +30,15 @@ class CameraManager : NSObject {
     
     var previewLayer: AVCaptureVideoPreviewLayer?
     
+    // 缩放
+    var zoomFactor = CGFloat(0)
+    
+    var minZoomFactor = CGFloat(1)
+    
+    var maxZoomFactor = CGFloat(5)
+    
+    var lastZoomFactor = CGFloat(1)
+    
     // 当前使用的摄像头
     var cameraPosition = AVCaptureDevice.Position.unspecified
     
@@ -202,11 +211,33 @@ extension CameraManager {
 
         try backCamera.lockForConfiguration()
         
-        backCamera.focusPointOfInterest = point
-        backCamera.exposurePointOfInterest = point
+        if backCamera.isFocusPointOfInterestSupported {
+            backCamera.focusPointOfInterest = point
+            backCamera.focusMode = .autoFocus
+        }
         
-        backCamera.focusMode = .continuousAutoFocus
+        backCamera.exposurePointOfInterest = point
         backCamera.exposureMode = .continuousAutoExposure
+        
+        backCamera.unlockForConfiguration()
+        
+    }
+    
+    func startZoom() {
+        lastZoomFactor = zoomFactor
+    }
+    
+    func zoom(factor: CGFloat) throws {
+        
+        guard let backCamera = backCamera else {
+            throw CameraError.invalidOperation
+        }
+        
+        try backCamera.lockForConfiguration()
+        
+        zoomFactor = min(maxZoomFactor, max(minZoomFactor, min(lastZoomFactor * factor, backCamera.activeFormat.videoMaxZoomFactor)))
+        
+        backCamera.videoZoomFactor = zoomFactor
         
         backCamera.unlockForConfiguration()
         

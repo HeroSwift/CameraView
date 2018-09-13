@@ -13,7 +13,7 @@ public class CameraView: UIView {
     // MARK: - 拍摄界面
     //
     
-    var captureView = UIView()
+    var captureView = CaptureView()
     
     var flashButton = SimpleButton()
     var positionButton = SimpleButton()
@@ -166,8 +166,23 @@ extension CameraView {
     
     private func addCaptureView() {
         
-        captureView.backgroundColor = .black
         captureView.translatesAutoresizingMaskIntoConstraints = false
+        
+        captureView.onFocusPointChange = {
+            guard self.cameraIsReady, self.isCapturing else {
+                return
+            }
+            try! self.cameraManager.focus(point: $0)
+        }
+        
+        captureView.onZoomStart = {
+            self.cameraManager.startZoom()
+        }
+        
+        captureView.onZoomFactorChange = {
+            try! self.cameraManager.zoom(factor: $0)
+        }
+        
         addSubview(captureView)
         
         addConstraints([
@@ -382,37 +397,6 @@ extension CameraView {
         
     }
     
-}
-
-//
-// MARK: - 点击事件
-//
-
-extension CameraView {
-    
-    public override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        guard let first = touches.first, cameraIsReady, isCapturing else {
-            return
-        }
-        
-        // 坐标计算参考文档 https://developer.apple.com/documentation/avfoundation/avcapturedevice/1385853-focuspointofinterest
-        // 焦点 (0,0) 表示画面的左上角，(1, 1) 表示画面的右下角
-        // 这套坐标系统的计算基于横屏的设备状态，并且 home 键在右边，而无视设备当前真实的横竖屏状态
-
-        // 因为我们是竖屏应用
-        // 因此这里需要坐标转换
-        let point = (first as UITouch).location(in: captureView)
-        let screenSize = captureView.bounds.size
-        
-        let x = point.y / screenSize.height
-        let y = 1 - point.x / screenSize.width
-        
-        print("\(x) \(y) \(point) \(screenSize)")
-        
-        try! cameraManager.focus(point: CGPoint(x: x, y: y))
-        
-    }
 }
 
 //
