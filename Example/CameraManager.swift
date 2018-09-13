@@ -3,11 +3,15 @@ import UIKit
 import AVFoundation
 
 // 支持拍照，录视频
-// 必须 ios 10+
 
 class CameraManager : NSObject {
     
-    var captureSession: AVCaptureSession?
+    var isGreatThanIos10 = true
+    
+    var captureSession = AVCaptureSession()
+    
+    // 当前使用的摄像头
+    var cameraPosition = AVCaptureDevice.Position.unspecified
     
     // 前摄
     var frontCamera: AVCaptureDevice?
@@ -24,27 +28,31 @@ class CameraManager : NSObject {
     // 二维码
     var metadataInput: AVCaptureMetadataInput?
     
-    var photoOutput: AVCapturePhotoOutput?
+    // 兼容 9 和 10+
+    var photoOutput: AVCaptureOutput?
     var movieOutput: AVCaptureMovieFileOutput?
     var metadataOutput: AVCaptureMetadataOutput?
+    
+    var preset = AVCaptureSession.Preset.high
     
     var previewLayer: AVCaptureVideoPreviewLayer?
     
     // 缩放
+    var lastZoomFactor = CGFloat(1)
     var zoomFactor = CGFloat(0)
-    
     var minZoomFactor = CGFloat(1)
-    
     var maxZoomFactor = CGFloat(5)
     
-    var lastZoomFactor = CGFloat(1)
     
-    // 当前使用的摄像头
-    var cameraPosition = AVCaptureDevice.Position.unspecified
     
     //
-    // MARK: - 拍照 配置
+    // MARK: - 配置
     //
+    
+    var deviceOrientation: UIDeviceOrientation?
+    
+    // 暗光环境下开启自动增强
+    var lowHightBoost = true
     
     // Whether to capture still images at the highest resolution supported by the active device and format.
     var isHighResolutionEnabled = true
@@ -72,13 +80,8 @@ extension CameraManager {
     
     func capturePhoto(completion: @escaping (UIImage?, Error?) -> Void) {
         
-        guard let captureSession = captureSession, captureSession.isRunning, let photoOutput = photoOutput else {
+        guard captureSession.isRunning, let device = cameraPosition == .back ? backCamera : frontCamera, let photoOutput = photoOutput else {
             completion(nil, CameraError.captureSessionIsMissing)
-            return
-        }
-        
-        guard let previewLayer = previewLayer else {
-            completion(nil, CameraError.invalidOperation)
             return
         }
         
@@ -89,101 +92,104 @@ extension CameraManager {
             settings.livePhotoMovieFileURL = URL(fileURLWithPath: path)
         }
         
-        if photoOutput.supportedFlashModes.contains(flashMode) {
-            settings.flashMode = flashMode
-        }
-        
-        let previewPixelType = settings.availablePreviewPhotoPixelFormatTypes.first!
-        let previewFormat: [String: Any] = [
-            kCVPixelBufferPixelFormatTypeKey as String: previewPixelType,
-            kCVPixelBufferWidthKey as String: previewLayer.frame.width,
-            kCVPixelBufferHeightKey as String: previewLayer.frame.height
-        ]
-        
-        settings.previewPhotoFormat = previewFormat
-        
         settings.isHighResolutionPhotoEnabled = isHighResolutionEnabled
         
-        photoOutput.capturePhoto(with: settings, delegate: self)
+        if isGreatThanIos10 {
+            let output = photoOutput as! AVCapturePhotoOutput
+            if output.supportedFlashModes.contains(flashMode) {
+                settings.flashMode = flashMode
+            }
+            output.capturePhoto(with: settings, delegate: self)
+        }
+        else {
+            try! device.lockForConfiguration()
+            device.flashMode = flashMode
+            device.unlockForConfiguration()
+            let output = photoOutput as! AVCaptureStillImageOutput
+            if let connection = output.connection(with: .video) {
+                output.captureStillImageAsynchronously(from: connection) { (sampleBuffer, error) in
+                    if let sampleBuffer = sampleBuffer {
+                        let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+                        let dataProvider = CGDataProvider(data: imageData! as CFData)
+                        let cgImageRef = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+                        
+                        // Set proper orientation for photo
+                        // If camera is currently set to front camera, flip image
+                        if let deviceOrientation = self.deviceOrientation {
+                            let image = UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: self.getImageOrientation(deviceOrientation: deviceOrientation))
+                            self.photoCaptureCompletionBlock?(image, nil)
+                        }
+                        else {
+                            let image = UIImage(cgImage: cgImageRef!)
+                            self.photoCaptureCompletionBlock?(image, nil)
+                        }
+                        
+                    }
+                }
+            }
+        }
+
         photoCaptureCompletionBlock = completion
         
     }
     
     func switchToFrontCamera() throws {
         
-        if cameraPosition == .front {
-            return
+        try configureSession { isRunning in
+            
+            guard let frontCamera = frontCamera else {
+                throw CameraError.invalidOperation
+            }
+            
+            if let input = backCameraInput {
+                removeInput(input)
+            }
+            
+            frontCameraInput = try addInput(device: frontCamera)
+            
+            if captureSession.canSetSessionPreset(preset) {
+                captureSession.sessionPreset = preset
+            }
+            else {
+                captureSession.sessionPreset = .high
+            }
+            
+            cameraPosition = .front
+            
         }
-        
-        guard let captureSession = captureSession, captureSession.isRunning
-        else {
-            throw CameraError.captureSessionIsMissing
-        }
-
-        captureSession.beginConfiguration()
-        
-        let inputs = captureSession.inputs
-        
-        guard let backCameraInput = backCameraInput, inputs.contains(backCameraInput), let frontCamera = frontCamera
-        else {
-            throw CameraError.invalidOperation
-        }
-        
-        frontCameraInput = try AVCaptureDeviceInput(device: frontCamera)
-        
-        captureSession.removeInput(backCameraInput)
-        
-        if captureSession.canAddInput(frontCameraInput!) {
-            captureSession.addInput(frontCameraInput!)
-            self.cameraPosition = .front
-        }
-        else {
-            throw CameraError.invalidOperation
-        }
-        
-        captureSession.commitConfiguration()
         
     }
     
     func switchToBackCamera() throws {
         
-        if cameraPosition == .back {
-            return
+        try configureSession { isRunning in
+            
+            guard let backCamera = backCamera else {
+                throw CameraError.invalidOperation
+            }
+            
+            if let input = frontCameraInput {
+                removeInput(input)
+            }
+            
+            backCameraInput = try addInput(device: backCamera)
+            
+            if captureSession.canSetSessionPreset(preset) {
+                captureSession.sessionPreset = preset
+            }
+            else {
+                captureSession.sessionPreset = .high
+            }
+            
+            cameraPosition = .back
+            
         }
-        
-        guard let captureSession = captureSession, captureSession.isRunning
-        else {
-            throw CameraError.captureSessionIsMissing
-        }
-        
-        captureSession.beginConfiguration()
-        
-        let inputs = captureSession.inputs
-        
-        guard let frontCameraInput = frontCameraInput, inputs.contains(frontCameraInput), let backCamera = backCamera
-        else {
-            throw CameraError.invalidOperation
-        }
-        
-        backCameraInput = try AVCaptureDeviceInput(device: backCamera)
-        
-        captureSession.removeInput(frontCameraInput)
-        
-        if captureSession.canAddInput(backCameraInput!) {
-            captureSession.addInput(backCameraInput!)
-            self.cameraPosition = .back
-        }
-        else {
-            throw CameraError.invalidOperation
-        }
-        
-        captureSession.commitConfiguration()
         
     }
     
     func displayPreview(on view: UIView) throws {
         
-        guard let captureSession = captureSession, captureSession.isRunning else {
+        guard captureSession.isRunning else {
             throw CameraError.captureSessionIsMissing
         }
         
@@ -213,11 +219,11 @@ extension CameraManager {
         
         if backCamera.isFocusPointOfInterestSupported {
             backCamera.focusPointOfInterest = point
-            backCamera.focusMode = .autoFocus
         }
         
-        backCamera.exposurePointOfInterest = point
-        backCamera.exposureMode = .continuousAutoExposure
+        if backCamera.isExposurePointOfInterestSupported {
+            backCamera.exposurePointOfInterest = point
+        }
         
         backCamera.unlockForConfiguration()
         
@@ -242,13 +248,17 @@ extension CameraManager {
         backCamera.unlockForConfiguration()
         
     }
-    
+
     func prepare(completionHandler: @escaping (Error?) -> Void) {
         
-        func createCaptureSession() {
-            captureSession = AVCaptureSession()
-            captureSession?.sessionPreset = .high
+        if #available(iOS 10.0, *) {
+            isGreatThanIos10 = false
         }
+        else {
+            isGreatThanIos10 = false
+        }
+        
+        // 枚举音视频设备
         func configureCaptureDevices() throws {
             
             let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
@@ -256,100 +266,79 @@ extension CameraManager {
             for camera in session.devices {
                 if camera.position == .front {
                     frontCamera = camera
+                    try configureCamera(device: camera)
                 }
                 else if camera.position == .back {
                     backCamera = camera
-                    
-                    // 自动聚焦
-                    try camera.lockForConfiguration()
-                    camera.focusMode = .continuousAutoFocus
-                    camera.unlockForConfiguration()
+                    try configureCamera(device: camera)
                 }
             }
             
             microphone = AVCaptureDevice.default(for: .audio)
+            
         }
         func configureDeviceInputs() throws {
-            
-            guard let captureSession = captureSession else {
-                throw CameraError.captureSessionIsMissing
+            if let microphone = microphone {
+                microphoneInput = try addInput(device: microphone)
             }
-            
-            if let backCamera = backCamera {
-                backCameraInput = try AVCaptureDeviceInput(device: backCamera)
-                
-                if captureSession.canAddInput(backCameraInput!) {
-                    captureSession.addInput(backCameraInput!)
-                }
-                else {
-                    throw CameraError.inputsAreInvalid
-                }
-                
-                cameraPosition = .back
-            }
-            else if let frontCamera = frontCamera {
-                frontCameraInput = try AVCaptureDeviceInput(device: frontCamera)
-                
-                if captureSession.canAddInput(frontCameraInput!) {
-                    captureSession.addInput(frontCameraInput!)
-                }
-                else {
-                    throw CameraError.inputsAreInvalid
-                }
-                
-                cameraPosition = .front
+            if cameraPosition != .front {
+                try switchToBackCamera()
             }
             else {
-                throw CameraError.noCamerasAvailable
-            }
-            
-            if let microphone = microphone {
-                microphoneInput = try AVCaptureDeviceInput(device: microphone)
-                
-                if captureSession.canAddInput(microphoneInput!) {
-                    captureSession.addInput(microphoneInput!)
-                }
-                else {
-                    throw CameraError.inputsAreInvalid
-                }
+                try switchToFrontCamera()
             }
         }
         func configurePhotoOutput() throws {
             
-            guard let captureSession = captureSession else {
-                throw CameraError.captureSessionIsMissing
-            }
+            let settings = [AVVideoCodecKey: AVVideoCodecJPEG]
             
-            photoOutput = AVCapturePhotoOutput()
-            
-            guard let photoOutput = photoOutput else {
-                throw CameraError.invalidOperation
-            }
-            
-            if captureSession.canAddOutput(photoOutput) {
-                
-                photoOutput.isHighResolutionCaptureEnabled = isHighResolutionEnabled
-                
-                photoOutput.setPreparedPhotoSettingsArray([AVCapturePhotoSettings(format: [AVVideoCodecKey : AVVideoCodecJPEG])], completionHandler: nil)
-                
-                if !photoOutput.isLivePhotoCaptureSupported {
-                    liveMode = .unavailable
+            if isGreatThanIos10 {
+                let photoOutput = AVCapturePhotoOutput()
+                if captureSession.canAddOutput(photoOutput) {
+                    photoOutput.isHighResolutionCaptureEnabled = isHighResolutionEnabled
+                    photoOutput.setPreparedPhotoSettingsArray([AVCapturePhotoSettings(format: settings)], completionHandler: nil)
+                    if !photoOutput.isLivePhotoCaptureSupported {
+                        liveMode = .unavailable
+                    }
+                    
+                    captureSession.addOutput(photoOutput)
+                    self.photoOutput = photoOutput
                 }
-                
-                captureSession.addOutput(photoOutput)
             }
-            
-            captureSession.startRunning()
+            else {
+                let photoOutput = AVCaptureStillImageOutput()
+                if captureSession.canAddOutput(photoOutput) {
+                    photoOutput.outputSettings = settings
+                    captureSession.addOutput(photoOutput)
+                    self.photoOutput = photoOutput
+                }
+            }
             
         }
+        func configureMovieOutput() throws {
+            
+            let movieOutput = AVCaptureMovieFileOutput()
+            
+            if captureSession.canAddOutput(movieOutput) {
+                captureSession.addOutput(movieOutput)
+                if let connection = movieOutput.connection(with: AVMediaType.video) {
+                    if connection.isVideoStabilizationSupported {
+                        connection.preferredVideoStabilizationMode = .auto
+                    }
+                }
+                self.movieOutput = movieOutput
+            }
+        }
+        
         
         DispatchQueue(label: "prepare").async {
             
             do {
-                createCaptureSession()
                 try configureCaptureDevices()
                 try configureDeviceInputs()
                 try configurePhotoOutput()
+                try configureMovieOutput()
+                self.captureSession.startRunning()
             }
             catch {
                 DispatchQueue.main.async {
@@ -409,6 +398,92 @@ extension CameraManager: AVCaptureMetadataOutputObjectsDelegate {
         }
         
     }
+}
+
+// 工具方法
+extension CameraManager {
+    
+    private func configureSession(callback: (_ isRunning: Bool) throws -> Void) throws {
+        
+        if captureSession.isRunning {
+            
+            captureSession.beginConfiguration()
+            
+            try callback(true)
+            
+            captureSession.commitConfiguration()
+            
+        }
+        else {
+            try callback(false)
+        }
+        
+    }
+    
+    private func configureCamera(device: AVCaptureDevice) throws {
+        
+        try device.lockForConfiguration()
+        
+        if device.isFocusModeSupported(.continuousAutoFocus) {
+            device.focusMode = .continuousAutoFocus
+        }
+        if device.isSmoothAutoFocusSupported {
+            device.isSmoothAutoFocusEnabled = true
+        }
+        if device.isExposureModeSupported(.continuousAutoExposure) {
+            device.exposureMode = .continuousAutoExposure
+        }
+        if device.isWhiteBalanceModeSupported(.continuousAutoWhiteBalance) {
+            device.whiteBalanceMode = .continuousAutoWhiteBalance
+        }
+        if device.isLowLightBoostSupported && lowHightBoost {
+            device.automaticallyEnablesLowLightBoostWhenAvailable = true
+        }
+        
+        device.unlockForConfiguration()
+        
+    }
+    
+    private func addInput(device: AVCaptureDevice) throws -> AVCaptureDeviceInput {
+        
+        let input = try AVCaptureDeviceInput(device: device)
+        
+        if captureSession.canAddInput(input) {
+            captureSession.addInput(input)
+        }
+        else {
+            throw CameraError.inputsAreInvalid
+        }
+        
+        return input
+        
+    }
+    
+    private func removeInput(_ input: AVCaptureDeviceInput) {
+        
+        if captureSession.inputs.contains(input) {
+            captureSession.removeInput(input)
+        }
+        
+    }
+    
+    private func getImageOrientation(deviceOrientation: UIDeviceOrientation) -> UIImageOrientation {
+        
+        let isBackCamera = cameraPosition == .back
+        
+        switch deviceOrientation {
+        case .landscapeLeft:
+            return isBackCamera ? .up : .downMirrored
+        case .landscapeRight:
+            return isBackCamera ? .down : .upMirrored
+        case .portraitUpsideDown:
+            return isBackCamera ? .left : .rightMirrored
+        default:
+            return isBackCamera ? .right : .leftMirrored
+        }
+        
+    }
+    
 }
 
 extension CameraManager {
