@@ -97,5 +97,6 @@ extension CaptureView: UIGestureRecognizerDelegate {
         }
         return true
     }
+    
 }
 
