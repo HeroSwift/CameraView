@@ -16,7 +16,7 @@ public class CameraView: UIView {
     var captureView = CaptureView()
     
     var flashButton = SimpleButton()
-    var positionButton = SimpleButton()
+    var flipButton = SimpleButton()
     
     var exitButton = SimpleButton()
     var captureButton = CircleView()
@@ -49,8 +49,8 @@ public class CameraView: UIView {
     var captureButtonTrackColor = UIColor(red: 41 / 255, green: 181 / 255, blue: 234 / 255, alpha: 1)
     var captureButtonMarginBottom = CGFloat(70)
     
-    var positionButtonMarginTop = CGFloat(40)
-    var positionButtonMarginRight = CGFloat(30)
+    var flipButtonMarginTop = CGFloat(40)
+    var flipButtonMarginRight = CGFloat(30)
     var flashButtonMarginRight = CGFloat(30)
     var exitButtonMarginRight = CGFloat(40)
     
@@ -96,7 +96,7 @@ public class CameraView: UIView {
             animations: {
                 self.chooseView.layoutIfNeeded()
                 self.flashButton.alpha = 0
-                self.positionButton.alpha = 0
+                self.flipButton.alpha = 0
                 self.captureButton.alpha = 0
                 self.exitButton.alpha = 0
                 self.cancelButton.alpha = 1
@@ -104,7 +104,7 @@ public class CameraView: UIView {
             },
             completion: { _ in
                 self.flashButton.isHidden = true
-                self.positionButton.isHidden = true
+                self.flipButton.isHidden = true
                 self.captureButton.isHidden = true
                 self.exitButton.isHidden = true
             }
@@ -131,7 +131,7 @@ public class CameraView: UIView {
             animations: {
                 self.chooseView.layoutIfNeeded()
                 self.flashButton.alpha = 1
-                self.positionButton.alpha = 1
+                self.flipButton.alpha = 1
                 self.captureButton.alpha = 1
                 self.exitButton.alpha = 1
                 self.cancelButton.alpha = 0
@@ -139,7 +139,7 @@ public class CameraView: UIView {
             },
             completion: { _ in
                 self.flashButton.isHidden = false
-                self.positionButton.isHidden = false
+                self.flipButton.isHidden = false
                 self.captureButton.isHidden = false
                 self.exitButton.isHidden = false
             }
@@ -223,26 +223,26 @@ extension CameraView {
 
     private func addPositionButton() {
         
-        positionButton.setTitle("后", for: .normal)
-        positionButton.backgroundColor = .blue
-        positionButton.translatesAutoresizingMaskIntoConstraints = false
+        flipButton.setTitle("后", for: .normal)
+        flipButton.backgroundColor = .blue
+        flipButton.translatesAutoresizingMaskIntoConstraints = false
 
-        addSubview(positionButton)
+        addSubview(flipButton)
         
         addConstraints([
-            NSLayoutConstraint(item: positionButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: positionButtonMarginTop),
-            NSLayoutConstraint(item: positionButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -positionButtonMarginRight),
+            NSLayoutConstraint(item: flipButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: flipButtonMarginTop),
+            NSLayoutConstraint(item: flipButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -flipButtonMarginRight),
         ])
         
-        positionButton.onClick = {
+        flipButton.onClick = {
             switch self.cameraManager.cameraPosition {
             case .front:
                 try? self.cameraManager.switchToBackCamera()
-                self.positionButton.setTitle("后", for: .normal)
+                self.flipButton.setTitle("后", for: .normal)
                 break
             case .back:
                 try? self.cameraManager.switchToFrontCamera()
-                self.positionButton.setTitle("前", for: .normal)
+                self.flipButton.setTitle("前", for: .normal)
                 break
             case .unspecified:
                 try? self.cameraManager.switchToBackCamera()
@@ -261,8 +261,8 @@ extension CameraView {
         addSubview(flashButton)
         
         addConstraints([
-            NSLayoutConstraint(item: flashButton, attribute: .centerY, relatedBy: .equal, toItem: positionButton, attribute: .centerY, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: flashButton, attribute: .right, relatedBy: .equal, toItem: positionButton, attribute: .left, multiplier: 1, constant: -flashButtonMarginRight),
+            NSLayoutConstraint(item: flashButton, attribute: .centerY, relatedBy: .equal, toItem: flipButton, attribute: .centerY, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: flashButton, attribute: .right, relatedBy: .equal, toItem: flipButton, attribute: .left, multiplier: 1, constant: -flashButtonMarginRight),
         ])
         
         flashButton.onClick = {
