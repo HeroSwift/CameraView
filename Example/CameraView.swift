@@ -166,6 +166,7 @@ extension CameraView {
     
     private func addCaptureView() {
         
+        captureView.backgroundColor = .black
         captureView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(captureView)
         
@@ -308,9 +309,11 @@ extension CameraView {
     
     private func addPhotoView() {
         
-        photoView.translatesAutoresizingMaskIntoConstraints = false
-        photoView.backgroundColor = .green
         photoView.isHidden = true
+        photoView.backgroundColor = .black
+        photoView.translatesAutoresizingMaskIntoConstraints = false
+        photoView.contentMode = .scaleAspectFit
+        
         addSubview(photoView)
         
         addConstraints([

@@ -185,7 +185,7 @@ extension CameraManager {
         }
         
         previewLayer.frame = view.frame
-        previewLayer.videoGravity = .resizeAspectFill
+        previewLayer.videoGravity = .resizeAspect
         previewLayer.connection?.videoOrientation = .portrait
         
         view.clipsToBounds = true
@@ -216,7 +216,7 @@ extension CameraManager {
         
         func createCaptureSession() {
             captureSession = AVCaptureSession()
-            captureSession?.sessionPreset = .photo
+            captureSession?.sessionPreset = .high
         }
         func configureCaptureDevices() throws {
             
