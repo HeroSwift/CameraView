@@ -172,7 +172,13 @@ extension CameraView {
             guard self.cameraIsReady, self.isCapturing else {
                 return
             }
-            try! self.cameraManager.focus(point: $0)
+            do {
+                try self.cameraManager.focus(point: $1)
+                self.captureView.moveFocusView(to: $0)
+            }
+            catch {
+                print(error.localizedDescription)
+            }
         }
         
         captureView.onZoomStart = {
