@@ -11,7 +11,11 @@ class CameraManager : NSObject {
     var captureSession = AVCaptureSession()
     
     // 当前使用的摄像头
-    var cameraPosition = AVCaptureDevice.Position.unspecified
+    var cameraPosition = AVCaptureDevice.Position.unspecified {
+        didSet {
+            onCameraPositionChange?()
+        }
+    }
     
     // 前摄
     var frontCamera: AVCaptureDevice?
@@ -40,8 +44,13 @@ class CameraManager : NSObject {
     var backgroundRecordingId: UIBackgroundTaskIdentifier?
     
     // 缩放
+    var zoomFactor = CGFloat(0) {
+        didSet {
+            onZoomFactorChange?()
+        }
+    }
+    
     var lastZoomFactor = CGFloat(1)
-    var zoomFactor = CGFloat(0)
     var minZoomFactor = CGFloat(1)
     var maxZoomFactor = CGFloat(5)
     
@@ -67,11 +76,21 @@ class CameraManager : NSObject {
     var livePhotoFileDir = NSTemporaryDirectory()
     
     // 当前的闪光灯模式
-    var flashMode = AVCaptureDevice.FlashMode.off
+    var flashMode = AVCaptureDevice.FlashMode.off {
+        didSet {
+            onFlashModeChange?()
+        }
+    }
     
     //
     // MARK: - 回调
     //
+    
+    var onFlashModeChange: (() -> Void)?
+    
+    var onCameraPositionChange: (() -> Void)?
+    
+    var onZoomFactorChange: (() -> Void)?
     
     var photoCaptureCompletionBlock: ((UIImage?, Error?) -> Void)?
     
@@ -154,6 +173,7 @@ extension CameraManager {
             
             captureSession.sessionPreset = captureSession.canSetSessionPreset(preset) ? preset : .high
             
+            flashMode = .off
             zoomFactor = 1
             cameraPosition = .front
             
@@ -177,11 +197,33 @@ extension CameraManager {
             
             captureSession.sessionPreset = captureSession.canSetSessionPreset(preset) ? preset : .high
             
+            flashMode = .off
             zoomFactor = 1
             cameraPosition = .back
             
         }
         
+    }
+    
+    func setFlashMode(_ flashMode: AVCaptureDevice.FlashMode) {
+        
+        guard let device = currentCamera else {
+            return
+        }
+        
+        if isGreatThanIos10 {
+            if let output = photoOutput {
+                if (output as! AVCapturePhotoOutput).supportedFlashModes.contains(flashMode) {
+                    self.flashMode = flashMode
+                }
+            }
+        }
+        else {
+            if device.isFlashModeSupported(flashMode) {
+                self.flashMode = flashMode
+            }
+        }
+
     }
     
     func displayPreview(on view: UIView) throws {
@@ -568,12 +610,11 @@ extension CameraManager {
             settings.livePhotoMovieFileURL = URL(fileURLWithPath: path)
         }
         
+        settings.flashMode = flashMode
         settings.isHighResolutionPhotoEnabled = isHighResolutionEnabled
         
         let output = photoOutput as! AVCapturePhotoOutput
-        if output.supportedFlashModes.contains(flashMode) {
-            settings.flashMode = flashMode
-        }
+
         output.capturePhoto(with: settings, delegate: self)
         
         photoCaptureCompletionBlock = completion

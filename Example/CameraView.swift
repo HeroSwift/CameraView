@@ -80,6 +80,38 @@ public class CameraView: UIView {
         
         backgroundColor = .clear
         
+        cameraManager.onFlashModeChange = {
+            
+            switch self.cameraManager.flashMode {
+            case .auto:
+                self.flashButton.setTitle("auto", for: .normal)
+                break
+            case .on:
+                self.flashButton.setTitle("on", for: .normal)
+                break
+            case .off:
+                self.flashButton.setTitle("off", for: .normal)
+                break
+            }
+            
+        }
+        
+        cameraManager.onCameraPositionChange = {
+            
+            switch self.cameraManager.cameraPosition {
+            case .front:
+                self.flipButton.setTitle("前", for: .normal)
+                break
+            case .back:
+                self.flipButton.setTitle("后", for: .normal)
+                break
+            case .unspecified:
+                self.flipButton.setTitle("未指定", for: .normal)
+                break
+            }
+            
+        }
+        
         addCaptureView()
         addPreviewView()
         
@@ -239,11 +271,9 @@ extension CameraView {
             switch self.cameraManager.cameraPosition {
             case .front:
                 try? self.cameraManager.switchToBackCamera()
-                self.flipButton.setTitle("后", for: .normal)
                 break
             case .back:
                 try? self.cameraManager.switchToFrontCamera()
-                self.flipButton.setTitle("前", for: .normal)
                 break
             case .unspecified:
                 try? self.cameraManager.switchToBackCamera()
@@ -269,16 +299,13 @@ extension CameraView {
         flashButton.onClick = {
             switch self.cameraManager.flashMode {
             case .auto:
-                self.cameraManager.flashMode = .on
-                self.flashButton.setTitle("on", for: .normal)
+                self.cameraManager.setFlashMode(.on)
                 break
             case .on:
-                self.cameraManager.flashMode = .off
-                self.flashButton.setTitle("off", for: .normal)
+                self.cameraManager.setFlashMode(.off)
                 break
             case .off:
-                self.cameraManager.flashMode = .auto
-                self.flashButton.setTitle("auto", for: .normal)
+                self.cameraManager.setFlashMode(.auto)
                 break
             }
         }
