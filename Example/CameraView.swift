@@ -173,8 +173,9 @@ extension CameraView {
                 return
             }
             do {
-                try self.cameraManager.focus(point: $1)
-                self.captureView.moveFocusView(to: $0)
+                if try self.cameraManager.focus(point: $1) {
+                    self.captureView.moveFocusView(to: $0)
+                }
             }
             catch {
                 print(error.localizedDescription)
