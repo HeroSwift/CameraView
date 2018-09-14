@@ -1,6 +1,5 @@
 
 import UIKit
-import AVFoundation
 
 public class CameraView: UIView {
     
@@ -29,8 +28,8 @@ public class CameraView: UIView {
     
     
     // 放拍好的预览图
-    var photoView = UIImageView()
-
+    var previewView = UIImageView()
+    
     var chooseView = UIView()
     var chooseViewWidthConstraint: NSLayoutConstraint!
     
@@ -118,8 +117,8 @@ public class CameraView: UIView {
                 print(error)
             }
             else if let photo = photo {
-                self.photoView.image = photo
                 self.showPreviewView()
+                self.previewView.image = photo
             }
         }
         
@@ -127,12 +126,9 @@ public class CameraView: UIView {
             if let error = error {
                 print(error)
             }
-            else if let videoPath = videoPath {
-                let player = AVPlayer(url: URL(fileURLWithPath: videoPath))
-                let playerLayer = AVPlayerLayer(player: player)
-                playerLayer.frame = self.bounds
-                self.layer.addSublayer(playerLayer)
-                player.play()
+            else if videoPath != nil {
+                self.showPreviewView()
+                self.cameraManager.startVideoPlaying(on: self.previewView)
             }
         }
         
@@ -166,11 +162,8 @@ public class CameraView: UIView {
             }
         )
         
-        // 拍照预览
-        if photoView.image != nil {
-            photoView.isHidden = false
-            captureView.isHidden = true
-        }
+        previewView.isHidden = false
+        captureView.isHidden = true
         
         isCapturing = false
         
@@ -201,11 +194,14 @@ public class CameraView: UIView {
             }
         )
         
-        // 拍照预览
-        if photoView.image != nil {
-            photoView.isHidden = true
-            captureView.isHidden = false
-            photoView.image = nil
+        previewView.isHidden = true
+        captureView.isHidden = false
+        
+        if previewView.image != nil {
+            previewView.image = nil
+        }
+        else {
+            cameraManager.stopVideoPlaying(on: previewView)
         }
         
         isCapturing = true
@@ -375,26 +371,21 @@ extension CameraView {
     
     private func addPreviewView() {
         
-        addPhotoView()
-        addChooseView()
+        previewView.isHidden = true
+        previewView.backgroundColor = .black
+        previewView.translatesAutoresizingMaskIntoConstraints = false
+        previewView.contentMode = .scaleAspectFit
         
-    }
-    
-    private func addPhotoView() {
-        
-        photoView.isHidden = true
-        photoView.backgroundColor = .black
-        photoView.translatesAutoresizingMaskIntoConstraints = false
-        photoView.contentMode = .scaleAspectFit
-        
-        addSubview(photoView)
+        addSubview(previewView)
         
         addConstraints([
-            NSLayoutConstraint(item: photoView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: photoView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: photoView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: photoView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: previewView, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: previewView, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: previewView, attribute: .left, relatedBy: .equal, toItem: self, attribute: .left, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: previewView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0),
         ])
+        
+        addChooseView()
         
     }
     

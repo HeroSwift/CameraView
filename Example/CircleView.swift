@@ -50,7 +50,7 @@ public class CircleView: UIView {
     private var isLongPressing = false
     
     // 按下之后多少秒触发长按回调
-    private var longPressDelay = 0.5
+    private var longPressInterval: TimeInterval = 1
 
     // 是否正在等待长按触发
     private var longPressWaiting = false
@@ -102,7 +102,7 @@ public class CircleView: UIView {
         
         delegate?.circleViewDidTouchDown(self)
         
-        Timer.scheduledTimer(timeInterval: longPressDelay, target: self, selector: #selector(CircleView.longPress), userInfo: nil, repeats: false)
+        Timer.scheduledTimer(timeInterval: longPressInterval, target: self, selector: #selector(CircleView.longPress), userInfo: nil, repeats: false)
     }
 
     // 松开，inside 表示是否在内圆松开
@@ -123,7 +123,7 @@ public class CircleView: UIView {
     }
     
     @objc private func longPress() {
-        guard longPressWaiting else {
+        guard isTouching, longPressWaiting else {
             return
         }
         longPressWaiting = false
