@@ -45,7 +45,16 @@ public class CircleView: UIView {
 
     // 是否触摸在圆内部
     private var isTouchInside = false
+    
+    // 是否正在长按
+    private var isLongPressing = false
+    
+    // 按下之后多少秒触发长按回调
+    private var longPressDelay = 0.5
 
+    // 是否正在等待长按触发
+    private var longPressWaiting = false
+    
     // 半径 = 内圆 + 圆环
     private var radius: CGFloat {
         return centerRadius + ringWidth
@@ -89,7 +98,11 @@ public class CircleView: UIView {
     private func touchDown() {
         isTouching = true
         isTouchInside = true
+        longPressWaiting = true
+        
         delegate?.circleViewDidTouchDown(self)
+        
+        Timer.scheduledTimer(timeInterval: longPressDelay, target: self, selector: #selector(CircleView.longPress), userInfo: nil, repeats: false)
     }
 
     // 松开，inside 表示是否在内圆松开
@@ -99,7 +112,23 @@ public class CircleView: UIView {
         }
         isTouching = false
         isTouchInside = false
-        delegate?.circleViewDidTouchUp(self, inside)
+        
+        if isLongPressing {
+            delegate?.circleViewDidLongPressEnd(self)
+        }
+        
+        delegate?.circleViewDidTouchUp(self, inside, isLongPressing)
+        
+        isLongPressing = false
+    }
+    
+    @objc private func longPress() {
+        guard longPressWaiting else {
+            return
+        }
+        longPressWaiting = false
+        isLongPressing = true
+        delegate?.circleViewDidLongPressStart(self)
     }
 
     public override func sizeToFit() {
@@ -131,6 +160,9 @@ public class CircleView: UIView {
                 }
                 else {
                     delegate?.circleViewDidTouchLeave(self)
+                    if longPressWaiting {
+                        longPressWaiting = false
+                    }
                 }
             }
         }

@@ -3,9 +3,9 @@ import UIKit
 
 public class CaptureView: UIView {
     
-    var onFocusPointChange: ((_ tapPoint: CGPoint, _ focusPoint: CGPoint) -> Void)?
+    var onFocusPointChange: ((CGPoint, CGPoint) -> Void)?
     var onZoomStart: (() -> Void)?
-    var onZoomFactorChange: ((_ zoomFactor: CGFloat) -> Void)?
+    var onZoomFactorChange: ((CGFloat) -> Void)?
     
     private let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
     

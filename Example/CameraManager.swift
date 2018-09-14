@@ -13,7 +13,9 @@ class CameraManager : NSObject {
     // 当前使用的摄像头
     var cameraPosition = AVCaptureDevice.Position.unspecified {
         didSet {
-            onCameraPositionChange?()
+            DispatchQueue.main.async {
+                self.onCameraPositionChange?()
+            }
         }
     }
     
@@ -46,13 +48,26 @@ class CameraManager : NSObject {
     // 缩放
     var zoomFactor = CGFloat(0) {
         didSet {
-            onZoomFactorChange?()
+            DispatchQueue.main.async {
+                self.onZoomFactorChange?()
+            }
         }
     }
     
     var lastZoomFactor = CGFloat(1)
     var minZoomFactor = CGFloat(1)
     var maxZoomFactor = CGFloat(5)
+    
+    
+    // MARK: - 录制视频的配置
+    
+    // 保存视频文件的目录
+    var movieDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first
+    
+    // 当前正在录制的视频文件路径
+    var moviePath = ""
+    
+    var movieExtname = ".mp4"
     
     
     
@@ -78,7 +93,9 @@ class CameraManager : NSObject {
     // 当前的闪光灯模式
     var flashMode = AVCaptureDevice.FlashMode.off {
         didSet {
-            onFlashModeChange?()
+            DispatchQueue.main.async {
+                self.onFlashModeChange?()
+            }
         }
     }
     
@@ -92,9 +109,9 @@ class CameraManager : NSObject {
     
     var onZoomFactorChange: (() -> Void)?
     
-    var photoCaptureCompletionBlock: ((UIImage?, Error?) -> Void)?
+    var onCapturePhotoCompletion: ((UIImage?, Error?) -> Void)?
     
-    var metadataCaptureCompletionBlock: ((String) -> Void)?
+    var onRecordVideoCompletion: ((String?, Error?) -> Void)?
     
     //
     // MARK: - 计算属性
@@ -112,13 +129,13 @@ class CameraManager : NSObject {
 extension CameraManager {
     
     // 拍照
-    func capturePhoto(completion: @escaping (UIImage?, Error?) -> Void) {
+    func capturePhoto() {
         
         if isGreatThanIos10 {
-            capturePhoto10(completion: completion)
+            capturePhoto10()
         }
         else {
-            capturePhoto9(completion: completion)
+            capturePhoto9()
         }
         
     }
@@ -126,7 +143,7 @@ extension CameraManager {
     // 录制视频
     func startVideoRecording() {
         
-        guard let output = movieOutput, !output.isRecording else {
+        guard let output = movieOutput, !output.isRecording, let movieDir = movieDir else {
             return
         }
         
@@ -141,9 +158,14 @@ extension CameraManager {
         
         connection?.videoOrientation = getVideoOrientation(deviceOrientation: deviceOrientation)
         
-        let filePath = ""
+        let format = DateFormatter()
+        format.dateFormat = "yyyy-MM-dd-HH-mm-ss"
         
-        output.startRecording(to: URL(fileURLWithPath: filePath), recordingDelegate: self)
+        moviePath = "\(movieDir)/\(format.string(from: Date()))\(movieExtname)"
+        
+        print(moviePath)
+        
+        output.startRecording(to: URL(fileURLWithPath: moviePath), recordingDelegate: self)
         
     }
     
@@ -420,15 +442,15 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
     ) {
         
         if let error = error {
-            photoCaptureCompletionBlock?(nil, error)
+            onCapturePhotoCompletion?(nil, error)
         }
         else if let buffer = photoSampleBuffer,
             let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer, previewPhotoSampleBuffer: nil),
             let image = UIImage(data: data) {
-            photoCaptureCompletionBlock?(image, nil)
+            onCapturePhotoCompletion?(image, nil)
         }
         else {
-            photoCaptureCompletionBlock?(nil, CameraError.unknown)
+            onCapturePhotoCompletion?(nil, CameraError.unknown)
         }
         
     }
@@ -444,12 +466,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
             backgroundRecordingId = nil
         }
         
-        if error != nil {
-            print("视频录制失败")
-        }
-        else {
-            print(outputFileURL.absoluteString)
-        }
+        onRecordVideoCompletion?(moviePath, error)
         
     }
     
@@ -474,7 +491,7 @@ extension CameraManager: AVCaptureMetadataOutputObjectsDelegate {
             let qrcodeObject = metadataObject as! AVMetadataMachineReadableCodeObject
             
             if let stringValue = qrcodeObject.stringValue {
-                metadataCaptureCompletionBlock?(stringValue)
+                
             }
             
         }
@@ -596,10 +613,9 @@ extension CameraManager {
 // 兼容 ios9 和 ios10+
 extension CameraManager {
     
-    func capturePhoto10(completion: @escaping (UIImage?, Error?) -> Void) {
+    func capturePhoto10() {
         
         guard captureSession.isRunning, let photoOutput = photoOutput else {
-            completion(nil, CameraError.captureSessionIsMissing)
             return
         }
         
@@ -617,14 +633,11 @@ extension CameraManager {
 
         output.capturePhoto(with: settings, delegate: self)
         
-        photoCaptureCompletionBlock = completion
-        
     }
     
-    func capturePhoto9(completion: @escaping (UIImage?, Error?) -> Void) {
+    func capturePhoto9() {
         
         guard captureSession.isRunning, let currentCamera = currentCamera, let photoOutput = photoOutput else {
-            completion(nil, CameraError.captureSessionIsMissing)
             return
         }
         
@@ -643,7 +656,7 @@ extension CameraManager {
                     // Set proper orientation for photo
                     // If camera is currently set to front camera, flip image
                     let image = UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: self.getImageOrientation(deviceOrientation: self.deviceOrientation))
-                    completion(image, nil)
+                    self.onCapturePhotoCompletion?(image, nil)
                     
                 }
             }

@@ -1,5 +1,6 @@
 
 import UIKit
+import AVFoundation
 
 public class CameraView: UIView {
     
@@ -110,6 +111,29 @@ public class CameraView: UIView {
                 break
             }
             
+        }
+        
+        cameraManager.onCapturePhotoCompletion =  { (photo, error) in
+            if let error = error {
+                print(error)
+            }
+            else if let photo = photo {
+                self.photoView.image = photo
+                self.showPreviewView()
+            }
+        }
+        
+        cameraManager.onRecordVideoCompletion = { (videoPath, error) in
+            if let error = error {
+                print(error)
+            }
+            else if let videoPath = videoPath {
+                let player = AVPlayer(url: URL(fileURLWithPath: videoPath))
+                let playerLayer = AVPlayerLayer(player: player)
+                playerLayer.frame = self.bounds
+                self.layer.addSublayer(playerLayer)
+                player.play()
+            }
         }
         
         addCaptureView()
@@ -443,19 +467,22 @@ extension CameraView: CircleViewDelegate {
         
     }
     
-    public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool) {
-        if inside {
+    public func circleViewDidLongPressStart(_ circleView: CircleView) {
+        if circleView == captureButton {
+            cameraManager.startVideoRecording()
+        }
+    }
+    
+    public func circleViewDidLongPressEnd(_ circleView: CircleView) {
+        if circleView == captureButton {
+            cameraManager.stopVideoRecording()
+        }
+    }
+    
+    public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool, _ isLongPress: Bool) {
+        if inside && !isLongPress {
             if circleView == captureButton {
-                cameraManager.capturePhoto { (photo, error) in
-                    if let error = error {
-                        print(error)
-                    }
-                    else if let photo = photo {
-                        print(photo)
-                        self.photoView.image = photo
-                        self.showPreviewView()
-                    }
-                }
+                cameraManager.capturePhoto()
             }
             else if circleView == cancelButton {
                 hidePreviewView()
