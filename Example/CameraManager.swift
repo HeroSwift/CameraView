@@ -145,7 +145,7 @@ extension CameraManager {
     // 录制视频
     func startVideoRecording() {
         
-        guard let output = movieOutput, !output.isRecording, let movieDir = movieDir else {
+        guard let output = movieOutput, !output.isRecording, let device = currentCamera, let movieDir = movieDir else {
             return
         }
         
@@ -160,12 +160,17 @@ extension CameraManager {
         
         connection?.videoOrientation = getVideoOrientation(deviceOrientation: deviceOrientation)
         
+        if flashMode == .on {
+            setTorchMode(.on)
+        }
+        else if flashMode == .auto {
+            setTorchMode(.auto)
+        }
+        
         let format = DateFormatter()
         format.dateFormat = "yyyy-MM-dd-HH-mm-ss"
         
         moviePath = "\(movieDir)/\(format.string(from: Date()))\(movieExtname)"
-        
-        print(moviePath)
         
         output.startRecording(to: URL(fileURLWithPath: moviePath), recordingDelegate: self)
         
@@ -178,6 +183,10 @@ extension CameraManager {
         }
         
         output.stopRecording()
+        
+        if flashMode != .off {
+            setTorchMode(.off)
+        }
         
     }
     
@@ -248,6 +257,26 @@ extension CameraManager {
             }
         }
 
+    }
+    
+    func setTorchMode(_ torchMode: AVCaptureDevice.TorchMode) {
+        
+        guard let device = currentCamera, device.hasTorch else {
+            return
+        }
+        
+        do {
+            try configureDevice(device) {
+                device.torchMode = torchMode
+                if torchMode == .on {
+                    try device.setTorchModeOn(level: 1.0)
+                }
+            }
+        }
+        catch {
+            print(error.localizedDescription)
+        }
+        
     }
     
     func displayPreview(on view: UIView) throws {
