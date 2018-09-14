@@ -71,7 +71,8 @@ class CameraManager : NSObject {
     
     var movieExtname = ".mp4"
     
-    
+    // 录制视频的最大时长，单位为秒
+    var maxMovieDuration = Double(5)
     
     //
     // MARK: - 配置
@@ -183,10 +184,6 @@ extension CameraManager {
         }
         
         output.stopRecording()
-        
-        if flashMode != .off {
-            setTorchMode(.off)
-        }
         
     }
     
@@ -458,7 +455,7 @@ extension CameraManager {
         func configureMovieOutput() throws {
             
             let movieOutput = AVCaptureMovieFileOutput()
-            
+
             if captureSession.canAddOutput(movieOutput) {
                 captureSession.addOutput(movieOutput)
                 if let connection = movieOutput.connection(with: .video) {
@@ -530,6 +527,10 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
         if let taskId = backgroundRecordingId {
             UIApplication.shared.endBackgroundTask(taskId)
             backgroundRecordingId = nil
+        }
+        
+        if flashMode != .off {
+            setTorchMode(.off)
         }
         
         onRecordVideoCompletion?(moviePath, error)

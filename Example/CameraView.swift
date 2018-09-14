@@ -40,12 +40,14 @@ public class CameraView: UIView {
     // MARK: - 录制界面 配置
     //
     
-    var captureButtonCenterRadius = CGFloat(36)
+    var captureButtonCenterRadiusNormal = CGFloat(36)
+    var captureButtonCenterRadiusRecording = CGFloat(24)
     var captureButtonCenterColor = UIColor.white
     var captureButtonCenterColorPressed = UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1)
-    var captureButtonRingWidth = CGFloat(6)
+    var captureButtonRingWidthNormal = CGFloat(6)
+    var captureButtonRingWidthRecording = CGFloat(30)
     var captureButtonRingColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
-    var captureButtonTrackWidth = CGFloat(6)
+    var captureButtonTrackWidth = CGFloat(4)
     var captureButtonTrackColor = UIColor(red: 41 / 255, green: 181 / 255, blue: 234 / 255, alpha: 1)
     var captureButtonMarginBottom = CGFloat(70)
     
@@ -64,6 +66,9 @@ public class CameraView: UIView {
     var cancelButtonCenterColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
     var cancelButtonCenterColorPressed = UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1)
     var cancelButtonRingWidth = CGFloat(0)
+    
+    
+    var recordingTimer: Timer?
     
     
     public override init(frame: CGRect) {
@@ -130,6 +135,7 @@ public class CameraView: UIView {
                 self.showPreviewView()
                 self.cameraManager.startVideoPlaying(on: self.previewView)
             }
+            self.stopRecordingTimer()
         }
         
         addCaptureView()
@@ -335,9 +341,9 @@ extension CameraView {
     private func addCaptureButton() {
         
         captureButton.delegate = self
-        captureButton.centerRadius = captureButtonCenterRadius
+        captureButton.centerRadius = captureButtonCenterRadiusNormal
         captureButton.centerColor = captureButtonCenterColor
-        captureButton.ringWidth = captureButtonRingWidth
+        captureButton.ringWidth = captureButtonRingWidthNormal
         captureButton.ringColor = captureButtonRingColor
         captureButton.trackWidth = captureButtonTrackWidth
         captureButton.trackColor = captureButtonTrackColor
@@ -449,6 +455,56 @@ extension CameraView {
 }
 
 //
+// MARK: - 录制视频的定时器
+//
+
+extension CameraView {
+    
+    func startRecordingTimer() {
+        recordingTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: #selector(CameraView.onRecordingDurationUpdate), userInfo: nil, repeats: true)
+        print("start timer")
+        
+        captureButton.centerRadius = captureButtonCenterRadiusRecording
+        captureButton.ringWidth = captureButtonRingWidthRecording
+        captureButton.sizeToFit()
+        captureButton.setNeedsLayout()
+        captureButton.setNeedsDisplay()
+    }
+    
+    private func stopRecordingTimer() {
+        guard let timer = recordingTimer else {
+            return
+        }
+        timer.invalidate()
+        self.recordingTimer = nil
+        print("stop timer")
+        
+        captureButton.centerRadius = captureButtonCenterRadiusNormal
+        captureButton.ringWidth = captureButtonRingWidthNormal
+        captureButton.trackValue = 0
+        captureButton.sizeToFit()
+        captureButton.setNeedsLayout()
+        captureButton.setNeedsDisplay()
+    }
+    
+    @objc private func onRecordingDurationUpdate() {
+        guard let output = cameraManager.movieOutput else {
+            return
+        }
+        
+        let currentTime = output.recordedDuration.seconds
+        captureButton.trackValue = currentTime / cameraManager.maxMovieDuration
+        captureButton.setNeedsDisplay()
+        
+        if currentTime >= cameraManager.maxMovieDuration {
+            cameraManager.stopVideoRecording()
+        }
+        
+    }
+    
+}
+
+//
 // MARK: - 圆形按钮的事件响应
 //
 
@@ -461,6 +517,7 @@ extension CameraView: CircleViewDelegate {
     public func circleViewDidLongPressStart(_ circleView: CircleView) {
         if circleView == captureButton {
             cameraManager.startVideoRecording()
+            startRecordingTimer()
         }
     }
     
