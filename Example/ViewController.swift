@@ -25,6 +25,8 @@ class ViewController: UIViewController {
             NSLayoutConstraint(item: cameraView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: 0),
         ])
         
+        cameraView.requestPermissions()
+        
     }
 
     override func didReceiveMemoryWarning() {

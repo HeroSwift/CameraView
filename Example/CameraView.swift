@@ -117,7 +117,23 @@ public class CameraView: UIView {
             
         }
         
-        cameraManager.onCapturePhotoCompletion =  { (photo, error) in
+        cameraManager.onPermissionsGranted = {
+            print("onPermissionsGranted")
+        }
+        
+        cameraManager.onPermissionsDenied = {
+            print("onPermissionsDenied")
+        }
+        
+        cameraManager.onCaptureWithoutPermissions = {
+            print("onCaptureWithoutPermissions")
+        }
+        
+        cameraManager.onRecordVideoDurationLessThanMinDuration = {
+            print("onRecordVideoDurationLessThanMinDuration")
+        }
+        
+        cameraManager.onFinishCapturePhoto =  { (photo, error) in
             if let error = error {
                 print(error)
             }
@@ -127,13 +143,13 @@ public class CameraView: UIView {
             }
         }
         
-        cameraManager.onRecordVideoCompletion = { (moviePath, error) in
+        cameraManager.onFinishRecordVideo = { (videoPath, error) in
             if let error = error {
                 print(error)
             }
-            else if let moviePath = moviePath {
+            else if let videoPath = videoPath {
                 self.showPreviewView()
-                self.previewView.startVideoPlaying(moviePath: moviePath)
+                self.previewView.startVideoPlaying(videoPath: videoPath)
             }
             self.stopRecordingTimer()
         }
@@ -212,6 +228,10 @@ public class CameraView: UIView {
         
         isCapturing = true
         
+    }
+    
+    public func requestPermissions() {
+        cameraManager.requestPermissions()
     }
     
     public override func layoutSubviews() {
@@ -501,15 +521,15 @@ extension CameraView {
     }
     
     @objc private func onRecordingDurationUpdate() {
-        guard let output = cameraManager.movieOutput else {
+        guard let output = cameraManager.videoOutput else {
             return
         }
         
         let currentTime = output.recordedDuration.seconds
-        captureButton.trackValue = currentTime / cameraManager.maxMovieDuration
+        captureButton.trackValue = currentTime / cameraManager.maxVideoDuration
         captureButton.setNeedsDisplay()
         
-        if currentTime >= cameraManager.maxMovieDuration {
+        if currentTime >= cameraManager.maxVideoDuration {
             cameraManager.stopVideoRecording()
         }
         

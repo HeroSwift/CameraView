@@ -21,9 +21,9 @@ public class PreviewView: UIImageView {
         contentMode = .scaleAspectFit
     }
     
-    func startVideoPlaying(moviePath: String) {
+    func startVideoPlaying(videoPath: String) {
         
-        let player = AVPlayer(url: URL(fileURLWithPath: moviePath))
+        let player = AVPlayer(url: URL(fileURLWithPath: videoPath))
         
         let playerLayer = AVPlayerLayer(player: player)
         playerLayer.frame = bounds

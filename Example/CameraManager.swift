@@ -27,7 +27,7 @@ class CameraManager : NSObject {
     
     // 兼容 9 和 10+
     var photoOutput: AVCaptureOutput?
-    var movieOutput: AVCaptureMovieFileOutput?
+    var videoOutput: AVCaptureMovieFileOutput?
     var metadataOutput: AVCaptureMetadataOutput?
     
     var backgroundRecordingId: UIBackgroundTaskIdentifier?
@@ -77,15 +77,18 @@ class CameraManager : NSObject {
     // MARK: - 录制视频的配置
     
     // 保存视频文件的目录
-    var movieDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first
+    var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first
     
     // 当前正在录制的视频文件路径
-    var moviePath = ""
+    var videoPath = ""
     
-    var movieExtname = ".mp4"
+    var videoExtname = ".mp4"
+    
+    // 录制视频的最小时长，单位为秒
+    var minVideoDuration = Double(1)
     
     // 录制视频的最大时长，单位为秒
-    var maxMovieDuration = Double(5)
+    var maxVideoDuration = Double(60)
     
     
     
@@ -114,9 +117,17 @@ class CameraManager : NSObject {
     
     var onZoomFactorChange: (() -> Void)?
     
-    var onCapturePhotoCompletion: ((UIImage?, Error?) -> Void)?
+    var onPermissionsGranted: (() -> Void)?
     
-    var onRecordVideoCompletion: ((String?, Error?) -> Void)?
+    var onPermissionsDenied: (() -> Void)?
+    
+    var onCaptureWithoutPermissions: (() -> Void)?
+    
+    var onRecordVideoDurationLessThanMinDuration: (() -> Void)?
+    
+    var onFinishCapturePhoto: ((UIImage?, Error?) -> Void)?
+    
+    var onFinishRecordVideo: ((String?, Error?) -> Void)?
     
     
     
@@ -135,6 +146,29 @@ class CameraManager : NSObject {
 
 extension CameraManager {
     
+    // 申请权限
+    func requestPermissions() {
+        
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            // 已授权
+            break
+        case .notDetermined:
+            AVCaptureDevice.requestAccess(for: .video) { granted in
+                if granted {
+                    self.onPermissionsGranted?()
+                }
+                else {
+                    self.onPermissionsDenied?()
+                }
+            }
+            break
+        default:
+            // 拒绝
+            break
+        }
+    }
+    
     // 拍照
     func capturePhoto() {
         
@@ -150,7 +184,7 @@ extension CameraManager {
     // 录制视频
     func startVideoRecording() {
         
-        guard let output = movieOutput, !output.isRecording, let device = currentCamera, let movieDir = movieDir else {
+        guard let output = videoOutput, !output.isRecording, let videoDir = videoDir else {
             return
         }
         
@@ -175,15 +209,15 @@ extension CameraManager {
         let format = DateFormatter()
         format.dateFormat = "yyyy-MM-dd-HH-mm-ss"
         
-        moviePath = "\(movieDir)/\(format.string(from: Date()))\(movieExtname)"
+        videoPath = "\(videoDir)/\(format.string(from: Date()))\(videoExtname)"
         
-        output.startRecording(to: URL(fileURLWithPath: moviePath), recordingDelegate: self)
+        output.startRecording(to: URL(fileURLWithPath: videoPath), recordingDelegate: self)
         
     }
     
     func stopVideoRecording() {
         
-        guard let output = movieOutput, output.isRecording else {
+        guard let output = videoOutput, output.isRecording else {
             return
         }
         
@@ -339,10 +373,14 @@ extension CameraManager {
     func prepare(completionHandler: @escaping (Error?) -> Void) {
         
         if #available(iOS 10.0, *) {
-            isGreatThanIos10 = false
+            isGreatThanIos10 = true
         }
         else {
             isGreatThanIos10 = false
+        }
+        
+        if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
+            onCaptureWithoutPermissions?()
         }
         
         // 枚举音视频设备
@@ -402,18 +440,18 @@ extension CameraManager {
             }
             
         }
-        func configureMovieOutput() throws {
+        func configureVideoOutput() throws {
             
-            let movieOutput = AVCaptureMovieFileOutput()
+            let videoOutput = AVCaptureMovieFileOutput()
 
-            if captureSession.canAddOutput(movieOutput) {
-                captureSession.addOutput(movieOutput)
-                if let connection = movieOutput.connection(with: .video) {
+            if captureSession.canAddOutput(videoOutput) {
+                captureSession.addOutput(videoOutput)
+                if let connection = videoOutput.connection(with: .video) {
                     if connection.isVideoStabilizationSupported {
                         connection.preferredVideoStabilizationMode = .auto
                     }
                 }
-                self.movieOutput = movieOutput
+                self.videoOutput = videoOutput
             }
         }
         
@@ -424,7 +462,7 @@ extension CameraManager {
                 try configureCaptureDevices()
                 try configureDeviceInputs()
                 try configurePhotoOutput()
-                try configureMovieOutput()
+                try configureVideoOutput()
                 self.captureSession.startRunning()
             }
             catch {
@@ -455,15 +493,15 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
     ) {
         
         if let error = error {
-            onCapturePhotoCompletion?(nil, error)
+            onFinishCapturePhoto?(nil, error)
         }
         else if let buffer = photoSampleBuffer,
             let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer, previewPhotoSampleBuffer: nil),
             let image = UIImage(data: data) {
-            onCapturePhotoCompletion?(image, nil)
+            onFinishCapturePhoto?(image, nil)
         }
         else {
-            onCapturePhotoCompletion?(nil, CameraError.unknown)
+            onFinishCapturePhoto?(nil, CameraError.unknown)
         }
         
     }
@@ -483,7 +521,26 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
             setTorchMode(.off)
         }
         
-        onRecordVideoCompletion?(moviePath, error)
+        var success = false
+        
+        if error == nil {
+            if output.recordedDuration.seconds >= minVideoDuration {
+                success = true
+                onFinishRecordVideo?(videoPath, nil)
+            }
+            else {
+                onRecordVideoDurationLessThanMinDuration?()
+                onFinishRecordVideo?(nil, nil)
+            }
+        }
+        else {
+            onFinishRecordVideo?(nil, error)
+        }
+        
+        if !success {
+            try! FileManager.default.removeItem(atPath: videoPath)
+            videoPath = ""
+        }
         
     }
     
@@ -673,7 +730,7 @@ extension CameraManager {
                     // Set proper orientation for photo
                     // If camera is currently set to front camera, flip image
                     let image = UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: self.getImageOrientation(deviceOrientation: self.deviceOrientation))
-                    self.onCapturePhotoCompletion?(image, nil)
+                    self.onFinishCapturePhoto?(image, nil)
                     
                 }
             }
