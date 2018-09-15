@@ -18,6 +18,7 @@ public class PreviewView: UIImageView {
     
     private func setup() {
         backgroundColor = .black
+        contentMode = .scaleAspectFit
     }
     
     func startVideoPlaying(moviePath: String) {

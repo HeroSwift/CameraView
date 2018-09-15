@@ -393,9 +393,7 @@ extension CameraView {
     private func addPreviewView() {
         
         previewView.isHidden = true
-        previewView.backgroundColor = .black
         previewView.translatesAutoresizingMaskIntoConstraints = false
-        previewView.contentMode = .scaleAspectFit
         
         addSubview(previewView)
         
