@@ -41,11 +41,7 @@ class CameraManager : NSObject {
     
     var preset = AVCaptureSession.Preset.high
     
-    var previewLayer: AVCaptureVideoPreviewLayer?
-    
     var backgroundRecordingId: UIBackgroundTaskIdentifier?
-    
-    var player: AVPlayer?
     
     // 缩放
     var zoomFactor = CGFloat(0) {
@@ -276,40 +272,7 @@ extension CameraManager {
         
     }
     
-    func startVideoPlaying(on view: UIView) {
-        
-        let player = AVPlayer(url: URL(fileURLWithPath: moviePath))
-        
-        let playerLayer = AVPlayerLayer(player: player)
-        playerLayer.frame = view.bounds
-        view.layer.addSublayer(playerLayer)
-        
-        player.play()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(playVideoCompletion), name: NSNotification.Name.AVPlayerItemDidPlayToEndTime, object: player.currentItem)
-        
-        self.player = player
-        
-    }
     
-    func stopVideoPlaying(on view: UIView) {
-        
-        player?.pause()
-        
-        // AVPlayerLayer 在最上层
-        view.layer.sublayers?.removeLast()
-        
-        self.player = nil
-        
-    }
-    
-    @objc func playVideoCompletion(_ notification: Notification) {
-        guard let player = player else {
-            return
-        }
-        player.seek(to: kCMTimeZero)
-        player.play()
-    }
     
     // 镜头聚焦
     func focus(point: CGPoint) throws -> Bool {

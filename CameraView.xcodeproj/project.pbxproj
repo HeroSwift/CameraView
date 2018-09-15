@@ -18,6 +18,7 @@
 		9D659B7021490AFF007899CC /* SimpleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B6B2148E70C007899CC /* SimpleButton.swift */; };
 		9D659B7121490AFF007899CC /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B652148BAE8007899CC /* CircleView.swift */; };
 		9D8E5253214A3F7E00543EA5 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E5252214A3F7E00543EA5 /* CaptureView.swift */; };
+		9D8E5255214CC09F00543EA5 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E5254214CC09F00543EA5 /* PreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		9D659B692148C4D4007899CC /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		9D659B6B2148E70C007899CC /* SimpleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleButton.swift; sourceTree = "<group>"; };
 		9D8E5252214A3F7E00543EA5 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
+		9D8E5254214CC09F00543EA5 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +109,7 @@
 				9D659B5A2148B9E9007899CC /* LaunchScreen.storyboard */,
 				9D659B5D2148B9E9007899CC /* Info.plist */,
 				9D8E5252214A3F7E00543EA5 /* CaptureView.swift */,
+				9D8E5254214CC09F00543EA5 /* PreviewView.swift */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -232,6 +235,7 @@
 			files = (
 				9D659B542148B9E7007899CC /* ViewController.swift in Sources */,
 				9D659B6D21490AFF007899CC /* CameraManager.swift in Sources */,
+				9D8E5255214CC09F00543EA5 /* PreviewView.swift in Sources */,
 				9D659B522148B9E7007899CC /* AppDelegate.swift in Sources */,
 				9D8E5253214A3F7E00543EA5 /* CaptureView.swift in Sources */,
 				9D659B6F21490AFF007899CC /* CircleViewDelegate.swift in Sources */,

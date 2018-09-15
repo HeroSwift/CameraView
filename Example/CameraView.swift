@@ -28,7 +28,7 @@ public class CameraView: UIView {
     
     
     // 放拍好的预览图
-    var previewView = UIImageView()
+    var previewView = PreviewView(frame: .zero)
     
     var chooseView = UIView()
     var chooseViewWidthConstraint: NSLayoutConstraint!
@@ -127,13 +127,13 @@ public class CameraView: UIView {
             }
         }
         
-        cameraManager.onRecordVideoCompletion = { (videoPath, error) in
+        cameraManager.onRecordVideoCompletion = { (moviePath, error) in
             if let error = error {
                 print(error)
             }
-            else if videoPath != nil {
+            else if let moviePath = moviePath {
                 self.showPreviewView()
-                self.cameraManager.startVideoPlaying(on: self.previewView)
+                self.previewView.startVideoPlaying(moviePath: moviePath)
             }
             self.stopRecordingTimer()
         }
@@ -207,7 +207,7 @@ public class CameraView: UIView {
             previewView.image = nil
         }
         else {
-            cameraManager.stopVideoPlaying(on: previewView)
+            previewView.stopVideoPlaying()
         }
         
         isCapturing = true
