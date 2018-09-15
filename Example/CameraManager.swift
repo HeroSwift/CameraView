@@ -10,15 +10,6 @@ class CameraManager : NSObject {
     
     var captureSession = AVCaptureSession()
     
-    // 当前使用的摄像头
-    var cameraPosition = AVCaptureDevice.Position.unspecified {
-        didSet {
-            DispatchQueue.main.async {
-                self.onCameraPositionChange?()
-            }
-        }
-    }
-    
     // 前摄
     var frontCamera: AVCaptureDevice?
     var frontCameraInput: AVCaptureDeviceInput?
@@ -39,8 +30,6 @@ class CameraManager : NSObject {
     var movieOutput: AVCaptureMovieFileOutput?
     var metadataOutput: AVCaptureMetadataOutput?
     
-    var preset = AVCaptureSession.Preset.high
-    
     var backgroundRecordingId: UIBackgroundTaskIdentifier?
     
     // 缩放
@@ -56,6 +45,34 @@ class CameraManager : NSObject {
     var minZoomFactor = CGFloat(1)
     var maxZoomFactor = CGFloat(5)
     
+    // MARK: - 通用配置
+    
+    // 设备状态
+    var deviceOrientation = UIDeviceOrientation.portrait
+    
+    // 预设
+    var preset = AVCaptureSession.Preset.high
+    
+    // 暗光环境下开启自动增强
+    var lowHightBoost = true
+    
+    // 当前的闪光灯模式
+    var flashMode = AVCaptureDevice.FlashMode.off {
+        didSet {
+            DispatchQueue.main.async {
+                self.onFlashModeChange?()
+            }
+        }
+    }
+    
+    // 当前使用的摄像头
+    var cameraPosition = AVCaptureDevice.Position.unspecified {
+        didSet {
+            DispatchQueue.main.async {
+                self.onCameraPositionChange?()
+            }
+        }
+    }
     
     // MARK: - 录制视频的配置
     
@@ -70,15 +87,11 @@ class CameraManager : NSObject {
     // 录制视频的最大时长，单位为秒
     var maxMovieDuration = Double(5)
     
-    //
-    // MARK: - 配置
-    //
     
-    // 设备状态
-    var deviceOrientation = UIDeviceOrientation.portrait
     
-    // 暗光环境下开启自动增强
-    var lowHightBoost = true
+    //
+    // MARK: - 拍照的配置
+    //
     
     // Whether to capture still images at the highest resolution supported by the active device and format.
     var isHighResolutionEnabled = true
@@ -87,16 +100,9 @@ class CameraManager : NSObject {
     var liveMode = CameraLiveMode.off
     
     // live 图片的保存目录
-    var livePhotoFileDir = NSTemporaryDirectory()
+    var livePhotoDir = NSTemporaryDirectory()
     
-    // 当前的闪光灯模式
-    var flashMode = AVCaptureDevice.FlashMode.off {
-        didSet {
-            DispatchQueue.main.async {
-                self.onFlashModeChange?()
-            }
-        }
-    }
+    
     
     //
     // MARK: - 回调
@@ -111,6 +117,8 @@ class CameraManager : NSObject {
     var onCapturePhotoCompletion: ((UIImage?, Error?) -> Void)?
     
     var onRecordVideoCompletion: ((String?, Error?) -> Void)?
+    
+    
     
     //
     // MARK: - 计算属性
@@ -631,8 +639,8 @@ extension CameraManager {
         let settings = AVCapturePhotoSettings()
         
         if liveMode == .on {
-            let path = "\(livePhotoFileDir)/photo_\(settings.uniqueID)"
-            settings.livePhotoMovieFileURL = URL(fileURLWithPath: path)
+            let livePhotoPath = "\(livePhotoDir)/live_photo_\(settings.uniqueID)"
+            settings.livePhotoMovieFileURL = URL(fileURLWithPath: livePhotoPath)
         }
         
         settings.flashMode = flashMode
