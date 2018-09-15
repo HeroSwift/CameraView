@@ -25,8 +25,6 @@ public class CameraView: UIView {
     // MARK: - 选择界面
     //
     
-    
-    
     // 放拍好的预览图
     var previewView = PreviewView(frame: .zero)
     
@@ -49,22 +47,20 @@ public class CameraView: UIView {
     var captureButtonRingColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
     var captureButtonTrackWidth = CGFloat(4)
     var captureButtonTrackColor = UIColor(red: 41 / 255, green: 181 / 255, blue: 234 / 255, alpha: 1)
-    var captureButtonMarginBottom = CGFloat(70)
+    var captureButtonMarginBottom = CGFloat(50)
     
-    var flipButtonMarginTop = CGFloat(40)
-    var flipButtonMarginRight = CGFloat(30)
-    var flashButtonMarginRight = CGFloat(30)
-    var exitButtonMarginRight = CGFloat(40)
+    var flipButtonMarginTop = CGFloat(24)
+    var flipButtonMarginRight = CGFloat(20)
+    var flashButtonMarginRight = CGFloat(14)
+    var exitButtonMarginRight = CGFloat(50)
     
     
-    var okButtonCenterRadius = CGFloat(30)
-    var okButtonCenterColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
-    var okButtonCenterColorPressed = UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1)
+    var okButtonCenterRadius = CGFloat(38)
+    var okButtonCenterColor = UIColor.white
     var okButtonRingWidth = CGFloat(0)
     
-    var cancelButtonCenterRadius = CGFloat(30)
-    var cancelButtonCenterColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
-    var cancelButtonCenterColorPressed = UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1)
+    var cancelButtonCenterRadius = CGFloat(38)
+    var cancelButtonCenterColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 0.9)
     var cancelButtonRingWidth = CGFloat(0)
     
     
@@ -89,29 +85,13 @@ public class CameraView: UIView {
             
             switch self.cameraManager.flashMode {
             case .auto:
-                self.flashButton.setTitle("auto", for: .normal)
+                self.flashButton.setImage(UIImage(named: "flash-auto"), for: .normal)
                 break
             case .on:
-                self.flashButton.setTitle("on", for: .normal)
+                self.flashButton.setImage(UIImage(named: "flash-on"), for: .normal)
                 break
             case .off:
-                self.flashButton.setTitle("off", for: .normal)
-                break
-            }
-            
-        }
-        
-        cameraManager.onCameraPositionChange = {
-            
-            switch self.cameraManager.cameraPosition {
-            case .front:
-                self.flipButton.setTitle("前", for: .normal)
-                break
-            case .back:
-                self.flipButton.setTitle("后", for: .normal)
-                break
-            case .unspecified:
-                self.flipButton.setTitle("未指定", for: .normal)
+                self.flashButton.setImage(UIImage(named: "flash-off"), for: .normal)
                 break
             }
             
@@ -161,7 +141,7 @@ public class CameraView: UIView {
     
     private func showPreviewView() {
         
-        chooseViewWidthConstraint.constant = 200
+        chooseViewWidthConstraint.constant = 230
         
         UIView.animate(
             withDuration: 0.5,
@@ -317,8 +297,7 @@ extension CameraView {
 
     private func addFlipButton() {
         
-        flipButton.setTitle("后", for: .normal)
-        flipButton.backgroundColor = .blue
+        flipButton.setImage(UIImage(named: "camera-flip"), for: .normal)
         flipButton.translatesAutoresizingMaskIntoConstraints = false
 
         addSubview(flipButton)
@@ -326,6 +305,8 @@ extension CameraView {
         addConstraints([
             NSLayoutConstraint(item: flipButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: flipButtonMarginTop),
             NSLayoutConstraint(item: flipButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -flipButtonMarginRight),
+            NSLayoutConstraint(item: flipButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 50),
+            NSLayoutConstraint(item: flipButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44),
         ])
         
         flipButton.onClick = {
@@ -346,8 +327,7 @@ extension CameraView {
     
     private func addFlashButton() {
         
-        flashButton.setTitle("off", for: .normal)
-        flashButton.backgroundColor = UIColor.cyan
+        flashButton.setImage(UIImage(named: "flash-off"), for: .normal)
         flashButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(flashButton)
@@ -355,6 +335,8 @@ extension CameraView {
         addConstraints([
             NSLayoutConstraint(item: flashButton, attribute: .centerY, relatedBy: .equal, toItem: flipButton, attribute: .centerY, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: flashButton, attribute: .right, relatedBy: .equal, toItem: flipButton, attribute: .left, multiplier: 1, constant: -flashButtonMarginRight),
+            NSLayoutConstraint(item: flashButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 50),
+            NSLayoutConstraint(item: flashButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44),
         ])
         
         flashButton.onClick = {
@@ -397,8 +379,7 @@ extension CameraView {
     
     private func addExitButton() {
         
-        exitButton.setTitle("退出", for: .normal)
-        exitButton.backgroundColor = UIColor.brown
+        exitButton.setImage(UIImage(named: "exit"), for: .normal)
         exitButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(exitButton)
@@ -406,6 +387,8 @@ extension CameraView {
         addConstraints([
             NSLayoutConstraint(item: exitButton, attribute: .centerY, relatedBy: .equal, toItem: captureButton, attribute: .centerY, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: exitButton, attribute: .right, relatedBy: .equal, toItem: captureButton, attribute: .left, multiplier: 1, constant: -exitButtonMarginRight),
+            NSLayoutConstraint(item: exitButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 50),
+            NSLayoutConstraint(item: exitButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44),
         ])
         
     }
@@ -455,12 +438,13 @@ extension CameraView {
         okButton.centerRadius = okButtonCenterRadius
         okButton.centerColor = okButtonCenterColor
         okButton.ringWidth = okButtonRingWidth
+        okButton.centerImage = UIImage(named: "ok")
         
         okButton.translatesAutoresizingMaskIntoConstraints = false
         chooseView.addSubview(okButton)
 
         chooseView.addConstraints([
-            NSLayoutConstraint(item: okButton, attribute: .left, relatedBy: .equal, toItem: chooseView, attribute: .left, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: okButton, attribute: .right, relatedBy: .equal, toItem: chooseView, attribute: .right, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: okButton, attribute: .centerY, relatedBy: .equal, toItem: chooseView, attribute: .centerY, multiplier: 1, constant: 0),
         ])
         
@@ -473,13 +457,13 @@ extension CameraView {
         cancelButton.centerRadius = cancelButtonCenterRadius
         cancelButton.centerColor = cancelButtonCenterColor
         cancelButton.ringWidth = cancelButtonRingWidth
+        cancelButton.centerImage = UIImage(named: "cancel")
         
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         chooseView.addSubview(cancelButton)
         
         chooseView.addConstraints([
-            NSLayoutConstraint(item: cancelButton, attribute: .right, relatedBy: .equal, toItem: chooseView, attribute: .right, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: cancelButton, attribute: .centerY, relatedBy: .equal, toItem: chooseView, attribute: .centerY, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: cancelButton, attribute: .left, relatedBy: .equal, toItem: chooseView, attribute: .left, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: cancelButton, attribute: .centerY, relatedBy: .equal, toItem: chooseView, attribute: .centerY, multiplier: 1, constant: 0),
         ])
         
