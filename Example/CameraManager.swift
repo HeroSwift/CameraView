@@ -276,27 +276,6 @@ extension CameraManager {
         
     }
     
-    func displayPreview(on view: UIView) throws {
-        
-        guard captureSession.isRunning else {
-            throw CameraError.captureSessionIsMissing
-        }
-        
-        previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        
-        guard let previewLayer = previewLayer else {
-            throw CameraError.invalidOperation
-        }
-        
-        previewLayer.frame = view.frame
-        previewLayer.videoGravity = .resizeAspect
-        previewLayer.connection?.videoOrientation = .portrait
-        
-        view.clipsToBounds = true
-        view.layer.insertSublayer(previewLayer, at: 0)
-
-    }
-    
     func startVideoPlaying(on view: UIView) {
         
         let player = AVPlayer(url: URL(fileURLWithPath: moviePath))
@@ -643,7 +622,7 @@ extension CameraManager {
         
     }
     
-    private func getVideoOrientation(deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
+    func getVideoOrientation(deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
         
         switch deviceOrientation {
         case .landscapeLeft:
@@ -658,7 +637,7 @@ extension CameraManager {
         
     }
     
-    private func getImageOrientation(deviceOrientation: UIDeviceOrientation) -> UIImageOrientation {
+    func getImageOrientation(deviceOrientation: UIDeviceOrientation) -> UIImageOrientation {
         
         let isBackCamera = cameraPosition == .back
         

@@ -145,7 +145,7 @@ public class CameraView: UIView {
     
     private func showPreviewView() {
         
-        chooseViewWidthConstraint.constant = bounds.width / 2
+        chooseViewWidthConstraint.constant = 200
         
         UIView.animate(
             withDuration: 0.5,
@@ -214,6 +214,18 @@ public class CameraView: UIView {
         
     }
     
+    public override func layoutSubviews() {
+        
+        let currentDevice = UIDevice.current
+        let orientation = currentDevice.orientation
+        
+        if !orientation.isFlat {
+            cameraManager.deviceOrientation = orientation
+            captureView.updateLayer(orientation: cameraManager.getVideoOrientation(deviceOrientation: orientation))
+        }
+        
+    }
+    
 }
 
 //
@@ -257,7 +269,7 @@ extension CameraView {
             NSLayoutConstraint(item: captureView, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: 0),
         ])
         
-        addPositionButton()
+        addFlipButton()
         addFlashButton()
         
         addCaptureButton()
@@ -269,7 +281,10 @@ extension CameraView {
             }
             else {
                 do {
-                    try self.cameraManager.displayPreview(on: self.captureView)
+                    self.captureView.bind(
+                        session: self.cameraManager.captureSession,
+                        orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
+                    )
                     self.cameraIsReady = true
                 }
                 catch {
@@ -280,7 +295,7 @@ extension CameraView {
         
     }
 
-    private func addPositionButton() {
+    private func addFlipButton() {
         
         flipButton.setTitle("后", for: .normal)
         flipButton.backgroundColor = .blue

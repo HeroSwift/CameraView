@@ -1,5 +1,6 @@
 
 import UIKit
+import AVFoundation
 
 public class CaptureView: UIView {
     
@@ -8,6 +9,8 @@ public class CaptureView: UIView {
     var onZoomFactorChange: ((CGFloat) -> Void)?
     
     private let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+    
+    private var previewLayer: AVCaptureVideoPreviewLayer?
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,6 +42,23 @@ public class CaptureView: UIView {
         
     }
     
+    func bind(session: AVCaptureSession, orientation: AVCaptureVideoOrientation) {
+        
+        let previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer.frame = bounds
+        previewLayer.videoGravity = .resizeAspect
+        previewLayer.connection?.videoOrientation = orientation
+
+        self.previewLayer = previewLayer
+        
+        layer.insertSublayer(previewLayer, at: 0)
+        
+    }
+    
+    func updateLayer(orientation: AVCaptureVideoOrientation) {
+        previewLayer?.connection?.videoOrientation = orientation
+    }
+    
     func moveFocusView(to point: CGPoint) {
         
         focusView.isHidden = false
@@ -64,6 +84,10 @@ public class CaptureView: UIView {
             }
         })
         
+    }
+    
+    public override func layoutSubviews() {
+        previewLayer?.frame = bounds
     }
     
     @objc private func tapGesture(tap: UITapGestureRecognizer) {
