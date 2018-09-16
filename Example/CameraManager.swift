@@ -5,9 +5,7 @@ import AVFoundation
 // 支持拍照，录视频
 
 class CameraManager : NSObject {
-    
-    var isGreatThanIos10 = true
-    
+
     var captureSession = AVCaptureSession()
     
     // 前摄
@@ -172,7 +170,7 @@ extension CameraManager {
     // 拍照
     func capturePhoto() {
         
-        if isGreatThanIos10 {
+        if #available(iOS 10.0, *) {
             capturePhoto10()
         }
         else {
@@ -279,7 +277,7 @@ extension CameraManager {
             return
         }
         
-        if isGreatThanIos10 {
+        if #available(iOS 10.0, *) {
             if let output = photoOutput {
                 if (output as! AVCapturePhotoOutput).supportedFlashModes.contains(flashMode) {
                     self.flashMode = flashMode
@@ -372,13 +370,6 @@ extension CameraManager {
 
     func prepare(completionHandler: @escaping (Error?) -> Void) {
         
-        if #available(iOS 10.0, *) {
-            isGreatThanIos10 = true
-        }
-        else {
-            isGreatThanIos10 = false
-        }
-        
         if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
             onCaptureWithoutPermissions?()
         }
@@ -386,9 +377,17 @@ extension CameraManager {
         // 枚举音视频设备
         func configureCaptureDevices() throws {
             
-            let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
+            let devices: [AVCaptureDevice]
             
-            for camera in session.devices {
+            if #available(iOS 10.0, *) {
+                let session = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera], mediaType: .video, position: .unspecified)
+                devices = session.devices
+            }
+            else {
+                devices = AVCaptureDevice.devices(for: .video)
+            }
+            
+            for camera in devices {
                 if camera.position == .front {
                     frontCamera = camera
                     try configureDevice(camera)
@@ -417,7 +416,7 @@ extension CameraManager {
             
             let settings = [AVVideoCodecKey: AVVideoCodecJPEG]
             
-            if isGreatThanIos10 {
+            if #available(iOS 10.0, *) {
                 let photoOutput = AVCapturePhotoOutput()
                 if captureSession.canAddOutput(photoOutput) {
                     photoOutput.isHighResolutionCaptureEnabled = isHighResolutionEnabled
@@ -482,6 +481,7 @@ extension CameraManager {
 }
 
 // 拍照
+@available(iOS 10.0, *)
 extension CameraManager: AVCapturePhotoCaptureDelegate {
     
     func photoOutput(_ output: AVCapturePhotoOutput,
@@ -687,6 +687,7 @@ extension CameraManager {
 // 兼容 ios9 和 ios10+
 extension CameraManager {
     
+    @available(iOS 10.0, *)
     func capturePhoto10() {
         
         guard captureSession.isRunning, let photoOutput = photoOutput else {
