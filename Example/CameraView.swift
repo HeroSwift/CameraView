@@ -280,16 +280,11 @@ extension CameraView {
                 print(error)
             }
             else {
-                do {
-                    self.captureView.bind(
-                        session: self.cameraManager.captureSession,
-                        orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
-                    )
-                    self.cameraIsReady = true
-                }
-                catch {
-                    print(error.localizedDescription)
-                }
+                self.captureView.bind(
+                    session: self.cameraManager.captureSession,
+                    orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
+                )
+                self.cameraIsReady = true
             }
         }
         
