@@ -122,7 +122,7 @@ public class CameraView: UIView {
         chooseViewWidthConstraint.constant = 230
         
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.2,
             delay: 0,
             options: .curveEaseOut,
             animations: {
@@ -133,13 +133,13 @@ public class CameraView: UIView {
                 self.exitButton.alpha = 0
                 self.cancelButton.alpha = 1
                 self.okButton.alpha = 1
-        },
+            },
             completion: { _ in
                 self.flashButton.isHidden = true
                 self.flipButton.isHidden = true
                 self.captureButton.isHidden = true
                 self.exitButton.isHidden = true
-        }
+            }
         )
         
         previewView.isHidden = false
@@ -154,7 +154,7 @@ public class CameraView: UIView {
         chooseViewWidthConstraint.constant = 0
         
         UIView.animate(
-            withDuration: 0.5,
+            withDuration: 0.2,
             delay: 0,
             options: .curveEaseOut,
             animations: {
@@ -165,13 +165,13 @@ public class CameraView: UIView {
                 self.exitButton.alpha = 1
                 self.cancelButton.alpha = 0
                 self.okButton.alpha = 0
-        },
+            },
             completion: { _ in
                 self.flashButton.isHidden = false
                 self.flipButton.isHidden = false
                 self.captureButton.isHidden = false
                 self.exitButton.isHidden = false
-        }
+            }
         )
         
         previewView.isHidden = true
