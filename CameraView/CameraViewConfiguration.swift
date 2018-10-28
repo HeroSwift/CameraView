@@ -1,0 +1,106 @@
+import UIKit
+
+// 配置
+public class CameraViewConfiguration {
+
+    // 录制按钮默认半径
+    public var captureButtonCenterRadiusNormal: CGFloat = 36
+    
+    // 录制按钮录制视频时的半径
+    public var captureButtonCenterRadiusRecording: CGFloat = 24
+    
+    // 录制按钮中心圆的默认颜色
+    public var captureButtonCenterColorNormal = UIColor.white
+    
+    // 录制按钮按下时中心圆的颜色
+    public var captureButtonCenterColorPressed = UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1)
+    
+    // 录制按钮默认的圆环大小
+    public var captureButtonRingWidthNormal: CGFloat = 6
+    
+    // 录制按钮录制时的圆环大小
+    public var captureButtonRingWidthRecording: CGFloat = 30
+    
+    // 录制按钮圆环颜色
+    public var captureButtonRingColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
+    
+    // 录制按钮进度条轨道的大小
+    public var captureButtonTrackWidth: CGFloat = 4
+    
+    // 录制按钮进度条轨道的颜色
+    public var captureButtonTrackColor = UIColor(red: 41 / 255, green: 181 / 255, blue: 234 / 255, alpha: 1)
+    
+    // 录制按钮与底边的距离
+    public var captureButtonMarginBottom: CGFloat = 50
+    
+    
+    // 切换摄像头按钮与顶边的距离
+    public var flipButtonMarginTop: CGFloat = 24
+    
+    // 切换摄像头按钮与右边的距离
+    public var flipButtonMarginRight: CGFloat = 20
+    
+    // 切换摄像头按钮的宽度
+    public var flipButtonWidth: CGFloat = 50
+    
+    // 切换摄像头按钮的高度
+    public var flipButtonHeight: CGFloat = 44
+    
+    // 切换摄像头按钮的图片
+    public var flipButtonImage = UIImage(named: "camera-flip", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    // 闪光灯按钮与切换摄像头按钮的距离
+    public var flashButtonMarginRight: CGFloat = 14
+    
+    // 闪光灯按钮的宽度
+    public var flashButtonWidth: CGFloat = 50
+    
+    // 闪光灯按钮的高度
+    public var flashButtonHeight: CGFloat = 44
+    
+    // 闪光灯开启的图片
+    public var flashOnImage = UIImage(named: "flash-on", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    // 闪光灯关闭的图片
+    public var flashOffImage = UIImage(named: "flash-off", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    // 闪光灯自动的图片
+    public var flashAutoImage = UIImage(named: "flash-auto", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    // 退出按钮与录制按钮的距离
+    public var exitButtonMarginRight: CGFloat = 50
+    
+    // 退出按钮的宽度
+    public var exitButtonWidth: CGFloat = 50
+    
+    // 退出按钮的高度
+    public var exitButtonHeight: CGFloat = 44
+    
+    // 退出按钮的图片
+    public var exitButtonImage = UIImage(named: "exit", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    // 确定按钮的半径
+    public var okButtonCenterRadius: CGFloat = 38
+    
+    // 确定按钮的颜色
+    public var okButtonCenterColor = UIColor.white
+    
+    // 确定按钮的图片
+    public var okButtonImage = UIImage(named: "ok", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    public var okButtonRingWidth: CGFloat = 0
+    
+    // 取消按钮的半径
+    public var cancelButtonCenterRadius: CGFloat = 38
+    
+    // 取消按钮的颜色
+    public var cancelButtonCenterColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 0.9)
+    
+    // 取消按钮的图片
+    public var cancelButtonImage = UIImage(named: "cancel", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    
+    public var cancelButtonRingWidth: CGFloat = 0
+    
+    public init() { }
+    
+}

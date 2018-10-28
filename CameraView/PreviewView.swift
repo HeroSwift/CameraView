@@ -2,18 +2,21 @@
 import UIKit
 import AVFoundation
 
-public class PreviewView: UIImageView {
+class PreviewView: UIImageView {
     
     private var playerLayer: AVPlayerLayer?
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    convenience init() {
+        self.init(frame: .zero)
         setup()
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setup() {

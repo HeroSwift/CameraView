@@ -7,7 +7,7 @@ public class CameraView: UIView {
     
     var cameraIsReady = false
     
-    var isCapturing = true
+    var cameraIsCapturing = false
     
     //
     // MARK: - 拍摄界面
@@ -25,8 +25,7 @@ public class CameraView: UIView {
     // MARK: - 选择界面
     //
     
-    // 放拍好的预览图
-    var previewView = PreviewView(frame: .zero)
+    var previewView = PreviewView()
     
     var chooseView = UIView()
     var chooseViewWidthConstraint: NSLayoutConstraint!
@@ -35,46 +34,25 @@ public class CameraView: UIView {
     var cancelButton = CircleView()
     
     //
-    // MARK: - 录制界面 配置
+    // MARK: - 私有属性
     //
     
-    var captureButtonCenterRadiusNormal = CGFloat(36)
-    var captureButtonCenterRadiusRecording = CGFloat(24)
-    var captureButtonCenterColor = UIColor.white
-    var captureButtonCenterColorPressed = UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1)
-    var captureButtonRingWidthNormal = CGFloat(6)
-    var captureButtonRingWidthRecording = CGFloat(30)
-    var captureButtonRingColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
-    var captureButtonTrackWidth = CGFloat(4)
-    var captureButtonTrackColor = UIColor(red: 41 / 255, green: 181 / 255, blue: 234 / 255, alpha: 1)
-    var captureButtonMarginBottom = CGFloat(50)
+    private var configuration: CameraViewConfiguration!
     
-    var flipButtonMarginTop = CGFloat(24)
-    var flipButtonMarginRight = CGFloat(20)
-    var flashButtonMarginRight = CGFloat(14)
-    var exitButtonMarginRight = CGFloat(50)
+    private var recordingTimer: Timer?
     
-    
-    var okButtonCenterRadius = CGFloat(38)
-    var okButtonCenterColor = UIColor.white
-    var okButtonRingWidth = CGFloat(0)
-    
-    var cancelButtonCenterRadius = CGFloat(38)
-    var cancelButtonCenterColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 0.9)
-    var cancelButtonRingWidth = CGFloat(0)
-    
-    
-    var recordingTimer: Timer?
-    
-    
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    public convenience init(configuration: CameraViewConfiguration) {
+        self.init()
+        self.configuration = configuration
         setup()
     }
     
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
     public required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setup() {
@@ -85,13 +63,13 @@ public class CameraView: UIView {
             
             switch self.cameraManager.flashMode {
             case .auto:
-                self.flashButton.setImage(UIImage(named: "flash-auto"), for: .normal)
+                self.flashButton.setImage(self.configuration.flashAutoImage, for: .normal)
                 break
             case .on:
-                self.flashButton.setImage(UIImage(named: "flash-on"), for: .normal)
+                self.flashButton.setImage(self.configuration.flashOnImage, for: .normal)
                 break
             case .off:
-                self.flashButton.setImage(UIImage(named: "flash-off"), for: .normal)
+                self.flashButton.setImage(self.configuration.flashOffImage, for: .normal)
                 break
             }
             
@@ -155,19 +133,19 @@ public class CameraView: UIView {
                 self.exitButton.alpha = 0
                 self.cancelButton.alpha = 1
                 self.okButton.alpha = 1
-            },
+        },
             completion: { _ in
                 self.flashButton.isHidden = true
                 self.flipButton.isHidden = true
                 self.captureButton.isHidden = true
                 self.exitButton.isHidden = true
-            }
+        }
         )
         
         previewView.isHidden = false
         captureView.isHidden = true
         
-        isCapturing = false
+        cameraIsCapturing = false
         
     }
     
@@ -187,13 +165,13 @@ public class CameraView: UIView {
                 self.exitButton.alpha = 1
                 self.cancelButton.alpha = 0
                 self.okButton.alpha = 0
-            },
+        },
             completion: { _ in
                 self.flashButton.isHidden = false
                 self.flipButton.isHidden = false
                 self.captureButton.isHidden = false
                 self.exitButton.isHidden = false
-            }
+        }
         )
         
         previewView.isHidden = true
@@ -206,7 +184,7 @@ public class CameraView: UIView {
             previewView.stopVideoPlaying()
         }
         
-        isCapturing = true
+        cameraIsCapturing = true
         
     }
     
@@ -239,7 +217,7 @@ extension CameraView {
         captureView.translatesAutoresizingMaskIntoConstraints = false
         
         captureView.onFocusPointChange = {
-            guard self.cameraIsReady, self.isCapturing else {
+            guard self.cameraIsReady, self.cameraIsCapturing else {
                 return
             }
             do {
@@ -285,23 +263,24 @@ extension CameraView {
                     orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
                 )
                 self.cameraIsReady = true
+                self.cameraIsCapturing = true
             }
         }
         
     }
-
+    
     private func addFlipButton() {
         
-        flipButton.setImage(UIImage(named: "camera-flip"), for: .normal)
+        flipButton.setImage(configuration.flipButtonImage, for: .normal)
         flipButton.translatesAutoresizingMaskIntoConstraints = false
-
+        
         addSubview(flipButton)
         
         addConstraints([
-            NSLayoutConstraint(item: flipButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: flipButtonMarginTop),
-            NSLayoutConstraint(item: flipButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -flipButtonMarginRight),
-            NSLayoutConstraint(item: flipButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 50),
-            NSLayoutConstraint(item: flipButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44),
+            NSLayoutConstraint(item: flipButton, attribute: .top, relatedBy: .equal, toItem: self, attribute: .top, multiplier: 1, constant: configuration.flipButtonMarginTop),
+            NSLayoutConstraint(item: flipButton, attribute: .right, relatedBy: .equal, toItem: self, attribute: .right, multiplier: 1, constant: -configuration.flipButtonMarginRight),
+            NSLayoutConstraint(item: flipButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: configuration.flipButtonWidth),
+            NSLayoutConstraint(item: flipButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: configuration.flipButtonHeight),
         ])
         
         flipButton.onClick = {
@@ -322,16 +301,16 @@ extension CameraView {
     
     private func addFlashButton() {
         
-        flashButton.setImage(UIImage(named: "flash-off"), for: .normal)
+        flashButton.setImage(configuration.flashOffImage, for: .normal)
         flashButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(flashButton)
         
         addConstraints([
             NSLayoutConstraint(item: flashButton, attribute: .centerY, relatedBy: .equal, toItem: flipButton, attribute: .centerY, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: flashButton, attribute: .right, relatedBy: .equal, toItem: flipButton, attribute: .left, multiplier: 1, constant: -flashButtonMarginRight),
-            NSLayoutConstraint(item: flashButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 50),
-            NSLayoutConstraint(item: flashButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44),
+            NSLayoutConstraint(item: flashButton, attribute: .right, relatedBy: .equal, toItem: flipButton, attribute: .left, multiplier: 1, constant: -configuration.flashButtonMarginRight),
+            NSLayoutConstraint(item: flashButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: configuration.flashButtonWidth),
+            NSLayoutConstraint(item: flashButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: configuration.flashButtonHeight),
         ])
         
         flashButton.onClick = {
@@ -353,37 +332,36 @@ extension CameraView {
     private func addCaptureButton() {
         
         captureButton.delegate = self
-        captureButton.centerRadius = captureButtonCenterRadiusNormal
-        captureButton.centerColor = captureButtonCenterColor
-        captureButton.ringWidth = captureButtonRingWidthNormal
-        captureButton.ringColor = captureButtonRingColor
-        captureButton.trackWidth = captureButtonTrackWidth
-        captureButton.trackColor = captureButtonTrackColor
+        captureButton.centerRadius = configuration.captureButtonCenterRadiusNormal
+        captureButton.centerColor = configuration.captureButtonCenterColorNormal
+        captureButton.ringWidth = configuration.captureButtonRingWidthNormal
+        captureButton.ringColor = configuration.captureButtonRingColor
+        captureButton.trackWidth = configuration.captureButtonTrackWidth
+        captureButton.trackColor = configuration.captureButtonTrackColor
         
-        captureButton.sizeToFit()
         captureButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(captureButton)
         
         addConstraints([
             NSLayoutConstraint(item: captureButton, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: captureButton, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: -captureButtonMarginBottom),
+            NSLayoutConstraint(item: captureButton, attribute: .bottom, relatedBy: .equal, toItem: self, attribute: .bottom, multiplier: 1, constant: -configuration.captureButtonMarginBottom),
         ])
         
     }
     
     private func addExitButton() {
         
-        exitButton.setImage(UIImage(named: "exit"), for: .normal)
+        exitButton.setImage(configuration.exitButtonImage, for: .normal)
         exitButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(exitButton)
         
         addConstraints([
             NSLayoutConstraint(item: exitButton, attribute: .centerY, relatedBy: .equal, toItem: captureButton, attribute: .centerY, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: exitButton, attribute: .right, relatedBy: .equal, toItem: captureButton, attribute: .left, multiplier: 1, constant: -exitButtonMarginRight),
-            NSLayoutConstraint(item: exitButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 50),
-            NSLayoutConstraint(item: exitButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: 44),
+            NSLayoutConstraint(item: exitButton, attribute: .right, relatedBy: .equal, toItem: captureButton, attribute: .left, multiplier: 1, constant: -configuration.exitButtonMarginRight),
+            NSLayoutConstraint(item: exitButton, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: configuration.exitButtonWidth),
+            NSLayoutConstraint(item: exitButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: configuration.exitButtonHeight),
         ])
         
     }
@@ -430,14 +408,14 @@ extension CameraView {
         
         okButton.alpha = 0
         okButton.delegate = self
-        okButton.centerRadius = okButtonCenterRadius
-        okButton.centerColor = okButtonCenterColor
-        okButton.ringWidth = okButtonRingWidth
-        okButton.centerImage = UIImage(named: "ok")
+        okButton.centerRadius = configuration.okButtonCenterRadius
+        okButton.centerColor = configuration.okButtonCenterColor
+        okButton.ringWidth = configuration.okButtonRingWidth
+        okButton.centerImage = configuration.okButtonImage
         
         okButton.translatesAutoresizingMaskIntoConstraints = false
         chooseView.addSubview(okButton)
-
+        
         chooseView.addConstraints([
             NSLayoutConstraint(item: okButton, attribute: .right, relatedBy: .equal, toItem: chooseView, attribute: .right, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: okButton, attribute: .centerY, relatedBy: .equal, toItem: chooseView, attribute: .centerY, multiplier: 1, constant: 0),
@@ -449,10 +427,10 @@ extension CameraView {
         
         cancelButton.alpha = 0
         cancelButton.delegate = self
-        cancelButton.centerRadius = cancelButtonCenterRadius
-        cancelButton.centerColor = cancelButtonCenterColor
-        cancelButton.ringWidth = cancelButtonRingWidth
-        cancelButton.centerImage = UIImage(named: "cancel")
+        cancelButton.centerRadius = configuration.cancelButtonCenterRadius
+        cancelButton.centerColor = configuration.cancelButtonCenterColor
+        cancelButton.ringWidth = configuration.cancelButtonRingWidth
+        cancelButton.centerImage = configuration.cancelButtonImage
         
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
         chooseView.addSubview(cancelButton)
@@ -476,9 +454,8 @@ extension CameraView {
         recordingTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: #selector(CameraView.onRecordingDurationUpdate), userInfo: nil, repeats: true)
         print("start timer")
         
-        captureButton.centerRadius = captureButtonCenterRadiusRecording
-        captureButton.ringWidth = captureButtonRingWidthRecording
-        captureButton.sizeToFit()
+        captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
+        captureButton.ringWidth = configuration.captureButtonRingWidthRecording
         captureButton.setNeedsLayout()
         captureButton.setNeedsDisplay()
     }
@@ -491,10 +468,9 @@ extension CameraView {
         self.recordingTimer = nil
         print("stop timer")
         
-        captureButton.centerRadius = captureButtonCenterRadiusNormal
-        captureButton.ringWidth = captureButtonRingWidthNormal
+        captureButton.centerRadius = configuration.captureButtonCenterRadiusNormal
+        captureButton.ringWidth = configuration.captureButtonRingWidthNormal
         captureButton.trackValue = 0
-        captureButton.sizeToFit()
         captureButton.setNeedsLayout()
         captureButton.setNeedsDisplay()
     }

@@ -2,7 +2,7 @@
 import UIKit
 import AVFoundation
 
-public class CaptureView: UIView {
+class CaptureView: UIView {
     
     var onFocusPointChange: ((CGPoint, CGPoint) -> Void)?
     var onZoomStart: (() -> Void)?
@@ -12,14 +12,17 @@ public class CaptureView: UIView {
     
     private var previewLayer: AVCaptureVideoPreviewLayer?
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    convenience init() {
+        self.init(frame: .zero)
         setup()
     }
     
-    public required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-        setup()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     private func setup() {
@@ -48,7 +51,7 @@ public class CaptureView: UIView {
         previewLayer.frame = bounds
         previewLayer.videoGravity = .resizeAspect
         previewLayer.connection?.videoOrientation = orientation
-
+        
         self.previewLayer = previewLayer
         
         layer.insertSublayer(previewLayer, at: 0)
@@ -104,7 +107,7 @@ public class CaptureView: UIView {
         let focusPoint = CGPoint(x: x, y: y)
         
         onFocusPointChange?(tapPoint, focusPoint)
-
+        
     }
     
     @objc private func pinchGesture(pinch: UIPinchGestureRecognizer) {

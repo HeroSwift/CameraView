@@ -7,18 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9D43504C2185DD5A00084889 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D43504B2185DD5A00084889 /* Assets.xcassets */; };
+		9D43504E2185DD9F00084889 /* CameraViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */; };
+		9D4350502185E5CE00084889 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43504F2185E5CE00084889 /* CameraView.swift */; };
+		9D4350522185E62500084889 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350512185E62500084889 /* CameraManager.swift */; };
+		9D4350542185E66400084889 /* SimpleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350532185E66400084889 /* SimpleButton.swift */; };
+		9D4350572185E67000084889 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350552185E67000084889 /* CircleView.swift */; };
+		9D4350582185E67000084889 /* CircleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350562185E67000084889 /* CircleViewDelegate.swift */; };
+		9D43505A2185E68E00084889 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350592185E68E00084889 /* CaptureView.swift */; };
+		9D43505C2185E6A600084889 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43505B2185E6A600084889 /* PreviewView.swift */; };
 		9D659B522148B9E7007899CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B512148B9E7007899CC /* AppDelegate.swift */; };
 		9D659B542148B9E7007899CC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B532148B9E7007899CC /* ViewController.swift */; };
 		9D659B572148B9E7007899CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D659B552148B9E7007899CC /* Main.storyboard */; };
 		9D659B592148B9E9007899CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D659B582148B9E9007899CC /* Assets.xcassets */; };
 		9D659B5C2148B9E9007899CC /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D659B5A2148B9E9007899CC /* LaunchScreen.storyboard */; };
-		9D659B6D21490AFF007899CC /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B632148BACE007899CC /* CameraManager.swift */; };
-		9D659B6E21490AFF007899CC /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B692148C4D4007899CC /* CameraView.swift */; };
-		9D659B6F21490AFF007899CC /* CircleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B662148BAE9007899CC /* CircleViewDelegate.swift */; };
-		9D659B7021490AFF007899CC /* SimpleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B6B2148E70C007899CC /* SimpleButton.swift */; };
-		9D659B7121490AFF007899CC /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B652148BAE8007899CC /* CircleView.swift */; };
-		9D8E5253214A3F7E00543EA5 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E5252214A3F7E00543EA5 /* CaptureView.swift */; };
-		9D8E5255214CC09F00543EA5 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D8E5254214CC09F00543EA5 /* PreviewView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +34,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9D43504B2185DD5A00084889 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewConfiguration.swift; sourceTree = "<group>"; };
+		9D43504F2185E5CE00084889 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		9D4350512185E62500084889 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		9D4350532185E66400084889 /* SimpleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleButton.swift; sourceTree = "<group>"; };
+		9D4350552185E67000084889 /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
+		9D4350562185E67000084889 /* CircleViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleViewDelegate.swift; sourceTree = "<group>"; };
+		9D4350592185E68E00084889 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
+		9D43505B2185E6A600084889 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		9D659B402148B9D0007899CC /* CameraView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CameraView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D659B442148B9D0007899CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9D659B4F2148B9E7007899CC /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -41,13 +52,6 @@
 		9D659B582148B9E9007899CC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9D659B5B2148B9E9007899CC /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9D659B5D2148B9E9007899CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9D659B632148BACE007899CC /* CameraManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
-		9D659B652148BAE8007899CC /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
-		9D659B662148BAE9007899CC /* CircleViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleViewDelegate.swift; sourceTree = "<group>"; };
-		9D659B692148C4D4007899CC /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
-		9D659B6B2148E70C007899CC /* SimpleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleButton.swift; sourceTree = "<group>"; };
-		9D8E5252214A3F7E00543EA5 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
-		9D8E5254214CC09F00543EA5 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +93,16 @@
 		9D659B422148B9D0007899CC /* CameraView */ = {
 			isa = PBXGroup;
 			children = (
+				9D4350532185E66400084889 /* SimpleButton.swift */,
+				9D4350552185E67000084889 /* CircleView.swift */,
+				9D4350562185E67000084889 /* CircleViewDelegate.swift */,
 				9D659B442148B9D0007899CC /* Info.plist */,
+				9D43504B2185DD5A00084889 /* Assets.xcassets */,
+				9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */,
+				9D43504F2185E5CE00084889 /* CameraView.swift */,
+				9D4350512185E62500084889 /* CameraManager.swift */,
+				9D4350592185E68E00084889 /* CaptureView.swift */,
+				9D43505B2185E6A600084889 /* PreviewView.swift */,
 			);
 			path = CameraView;
 			sourceTree = "<group>";
@@ -97,19 +110,12 @@
 		9D659B502148B9E7007899CC /* Example */ = {
 			isa = PBXGroup;
 			children = (
-				9D659B632148BACE007899CC /* CameraManager.swift */,
-				9D659B652148BAE8007899CC /* CircleView.swift */,
-				9D659B662148BAE9007899CC /* CircleViewDelegate.swift */,
-				9D659B6B2148E70C007899CC /* SimpleButton.swift */,
-				9D659B692148C4D4007899CC /* CameraView.swift */,
 				9D659B512148B9E7007899CC /* AppDelegate.swift */,
 				9D659B532148B9E7007899CC /* ViewController.swift */,
 				9D659B552148B9E7007899CC /* Main.storyboard */,
 				9D659B582148B9E9007899CC /* Assets.xcassets */,
 				9D659B5A2148B9E9007899CC /* LaunchScreen.storyboard */,
 				9D659B5D2148B9E9007899CC /* Info.plist */,
-				9D8E5252214A3F7E00543EA5 /* CaptureView.swift */,
-				9D8E5254214CC09F00543EA5 /* PreviewView.swift */,
 			);
 			path = Example;
 			sourceTree = "<group>";
@@ -206,6 +212,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D43504C2185DD5A00084889 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -226,6 +233,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9D43504E2185DD9F00084889 /* CameraViewConfiguration.swift in Sources */,
+				9D43505C2185E6A600084889 /* PreviewView.swift in Sources */,
+				9D4350582185E67000084889 /* CircleViewDelegate.swift in Sources */,
+				9D43505A2185E68E00084889 /* CaptureView.swift in Sources */,
+				9D4350572185E67000084889 /* CircleView.swift in Sources */,
+				9D4350522185E62500084889 /* CameraManager.swift in Sources */,
+				9D4350502185E5CE00084889 /* CameraView.swift in Sources */,
+				9D4350542185E66400084889 /* SimpleButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -234,14 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9D659B542148B9E7007899CC /* ViewController.swift in Sources */,
-				9D659B6D21490AFF007899CC /* CameraManager.swift in Sources */,
-				9D8E5255214CC09F00543EA5 /* PreviewView.swift in Sources */,
 				9D659B522148B9E7007899CC /* AppDelegate.swift in Sources */,
-				9D8E5253214A3F7E00543EA5 /* CaptureView.swift in Sources */,
-				9D659B6F21490AFF007899CC /* CircleViewDelegate.swift in Sources */,
-				9D659B6E21490AFF007899CC /* CameraView.swift in Sources */,
-				9D659B7121490AFF007899CC /* CircleView.swift in Sources */,
-				9D659B7021490AFF007899CC /* SimpleButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,6 +286,7 @@
 		9D659B462148B9D0007899CC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -327,7 +336,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -341,6 +350,7 @@
 		9D659B472148B9D0007899CC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -384,7 +394,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
@@ -409,7 +419,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = CameraView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -438,7 +448,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = CameraView/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

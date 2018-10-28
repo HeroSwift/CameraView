@@ -5,7 +5,7 @@ import AVFoundation
 // 支持拍照，录视频
 
 class CameraManager : NSObject {
-
+    
     var captureSession = AVCaptureSession()
     
     // 前摄
@@ -289,7 +289,7 @@ extension CameraManager {
                 self.flashMode = flashMode
             }
         }
-
+        
     }
     
     func setTorchMode(_ torchMode: AVCaptureDevice.TorchMode) {
@@ -357,7 +357,7 @@ extension CameraManager {
         guard let device = currentCamera else {
             return
         }
-    
+        
         try device.lockForConfiguration()
         
         zoomFactor = min(maxZoomFactor, max(minZoomFactor, min(lastZoomFactor * factor, device.activeFormat.videoMaxZoomFactor)))
@@ -367,7 +367,7 @@ extension CameraManager {
         device.unlockForConfiguration()
         
     }
-
+    
     func prepare(completionHandler: @escaping (Error?) -> Void) {
         
         if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
@@ -442,7 +442,7 @@ extension CameraManager {
         func configureVideoOutput() throws {
             
             let videoOutput = AVCaptureMovieFileOutput()
-
+            
             if captureSession.canAddOutput(videoOutput) {
                 captureSession.addOutput(videoOutput)
                 if let connection = videoOutput.connection(with: .video) {
@@ -490,7 +490,7 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
                      resolvedSettings: AVCaptureResolvedPhotoSettings,
                      bracketSettings: AVCaptureBracketedStillImageSettings?,
                      error: Error?
-    ) {
+        ) {
         
         if let error = error {
             onFinishCapturePhoto?(nil, error)
@@ -552,7 +552,7 @@ extension CameraManager: AVCaptureMetadataOutputObjectsDelegate {
     func metadataOutput(_ output: AVCaptureMetadataOutput,
                         didOutput metadataObjects: [AVMetadataObject],
                         from connection: AVCaptureConnection
-    ) {
+        ) {
         
         if metadataObjects.count == 0 {
             return
@@ -705,7 +705,7 @@ extension CameraManager {
         settings.isHighResolutionPhotoEnabled = isHighResolutionEnabled
         
         let output = photoOutput as! AVCapturePhotoOutput
-
+        
         output.capturePhoto(with: settings, delegate: self)
         
     }
