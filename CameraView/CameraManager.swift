@@ -709,8 +709,10 @@ extension CameraManager {
         settings.flashMode = flashMode
         settings.isHighResolutionPhotoEnabled = isHighResolutionEnabled
         
-        let output = photoOutput as! AVCapturePhotoOutput
+        videoPath = ""
         
+        let output = photoOutput as! AVCapturePhotoOutput
+
         output.capturePhoto(with: settings, delegate: self)
         
     }
@@ -727,6 +729,7 @@ extension CameraManager {
         
         let output = photoOutput as! AVCaptureStillImageOutput
         if let connection = output.connection(with: .video) {
+            videoPath = ""
             output.captureStillImageAsynchronously(from: connection) { (sampleBuffer, error) in
                 if let sampleBuffer = sampleBuffer {
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)

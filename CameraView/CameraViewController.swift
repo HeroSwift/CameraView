@@ -5,6 +5,10 @@ public class CameraViewController: UIViewController {
     
     public var configuration: CameraViewConfiguration!
     
+    public var onPhotoPicked: ((String) -> Void)?
+    
+    public var onVideoPicked: ((String, Int) -> Void)?
+    
     public override var prefersStatusBarHidden: Bool {
         return true
     }
