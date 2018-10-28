@@ -75,7 +75,7 @@ class CameraManager : NSObject {
     // MARK: - 录制视频的配置
     
     // 保存视频文件的目录
-    var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first
+    var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
     
     // 当前正在录制的视频文件路径
     var videoPath = ""
@@ -86,7 +86,7 @@ class CameraManager : NSObject {
     var minVideoDuration = Double(1)
     
     // 录制视频的最大时长，单位为秒
-    var maxVideoDuration = Double(60)
+    var maxVideoDuration = Double(10)
     
     
     
@@ -182,8 +182,13 @@ extension CameraManager {
     // 录制视频
     func startVideoRecording() {
         
-        guard let output = videoOutput, !output.isRecording, let videoDir = videoDir else {
+        guard let output = videoOutput, !output.isRecording else {
             return
+        }
+        
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: videoDir) {
+            try? fileManager.createDirectory(atPath: videoDir, withIntermediateDirectories: true, attributes: nil)
         }
         
         if UIDevice.current.isMultitaskingSupported {
@@ -205,7 +210,7 @@ extension CameraManager {
         }
         
         let format = DateFormatter()
-        format.dateFormat = "yyyy-MM-dd-HH-mm-ss"
+        format.dateFormat = "yyyy_MM_dd_HH_mm_ss"
         
         videoPath = "\(videoDir)/\(format.string(from: Date()))\(videoExtname)"
         

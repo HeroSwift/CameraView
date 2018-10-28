@@ -3,11 +3,7 @@ import UIKit
 
 public class CameraView: UIView {
     
-    var cameraManager = CameraManager()
-    
-    var cameraIsReady = false
-    
-    var cameraIsCapturing = false
+    var delegate: CameraViewDelegate?
     
     //
     // MARK: - 拍摄界面
@@ -20,6 +16,7 @@ public class CameraView: UIView {
     
     var exitButton = SimpleButton()
     var captureButton = CircleView()
+    var guideLabel = UILabel()
     
     //
     // MARK: - 选择界面
@@ -38,6 +35,12 @@ public class CameraView: UIView {
     //
     
     private var configuration: CameraViewConfiguration!
+    
+    private var cameraManager = CameraManager()
+    
+    private var cameraIsReady = false
+    
+    private var cameraIsCapturing = false
     
     private var recordingTimer: Timer?
     
@@ -76,11 +79,11 @@ public class CameraView: UIView {
         }
         
         cameraManager.onPermissionsGranted = {
-            print("onPermissionsGranted")
+            self.delegate?.cameraViewDidPermissionsGranted(self)
         }
         
         cameraManager.onPermissionsDenied = {
-            print("onPermissionsDenied")
+            self.delegate?.cameraViewDidPermissionsDenied(self)
         }
         
         cameraManager.onCaptureWithoutPermissions = {
@@ -88,7 +91,7 @@ public class CameraView: UIView {
         }
         
         cameraManager.onRecordVideoDurationLessThanMinDuration = {
-            print("onRecordVideoDurationLessThanMinDuration")
+            self.delegate?.cameraViewDidRecordDurationLessThanMinDuration(self)
         }
         
         cameraManager.onFinishCapturePhoto =  { (photo, error) in
@@ -252,6 +255,7 @@ extension CameraView {
         
         addCaptureButton()
         addExitButton()
+        addGuideLabel()
         
         cameraManager.prepare { error in
             if let error = error {
@@ -364,6 +368,33 @@ extension CameraView {
             NSLayoutConstraint(item: exitButton, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .height, multiplier: 1, constant: configuration.exitButtonHeight),
         ])
         
+        exitButton.onClick = {
+            self.delegate?.cameraViewDidExit(self)
+        }
+        
+    }
+    
+    private func addGuideLabel() {
+        
+        guideLabel.text = configuration.guideLabelTitle
+        guideLabel.textColor = configuration.guideLabelTextColor
+        guideLabel.font = configuration.guideLabelTextFont
+        
+        guideLabel.sizeToFit()
+        guideLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        addSubview(guideLabel)
+        
+        addConstraints([
+            NSLayoutConstraint(item: guideLabel, attribute: .centerX, relatedBy: .equal, toItem: captureButton, attribute: .centerX, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: guideLabel, attribute: .bottom, relatedBy: .equal, toItem: captureButton, attribute: .top, multiplier: 1, constant: -configuration.guideLabelMarginBottom)
+        ])
+        
+        // N 秒后淡出
+        if configuration.guideLabelFadeOutInterval > 0 {
+            Timer.scheduledTimer(timeInterval: configuration.guideLabelFadeOutInterval, target: self, selector: #selector(CameraView.onGuideLabelFadeOut), userInfo: nil, repeats: false)
+        }
+        
     }
     
     private func addPreviewView() {
@@ -456,6 +487,7 @@ extension CameraView {
         
         captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
         captureButton.ringWidth = configuration.captureButtonRingWidthRecording
+        captureButton.trackValue = 0
         captureButton.setNeedsLayout()
         captureButton.setNeedsDisplay()
     }
@@ -487,6 +519,22 @@ extension CameraView {
         if currentTime >= cameraManager.maxVideoDuration {
             cameraManager.stopVideoRecording()
         }
+        
+    }
+    
+    @objc private func onGuideLabelFadeOut() {
+        
+        UIView.animate(
+            withDuration: 0.8,
+            delay: 0,
+            options: .curveEaseOut,
+            animations: {
+                self.guideLabel.alpha = 0
+            },
+            completion: { _ in
+                 self.guideLabel.isHidden = true
+            }
+        )
         
     }
     
@@ -522,6 +570,10 @@ extension CameraView: CircleViewDelegate {
             }
             else if circleView == cancelButton {
                 hidePreviewView()
+            }
+            else if circleView == okButton {
+                hidePreviewView()
+                delegate?.cameraViewDidSubmit(self, "", 1)
             }
         }
     }

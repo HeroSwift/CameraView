@@ -5,6 +5,7 @@ import AVFoundation
 class CaptureView: UIView {
     
     var onFocusPointChange: ((CGPoint, CGPoint) -> Void)?
+    
     var onZoomStart: (() -> Void)?
     var onZoomFactorChange: ((CGFloat) -> Void)?
     
