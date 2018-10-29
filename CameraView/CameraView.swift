@@ -9,7 +9,7 @@ public class CameraView: UIView {
     // MARK: - 拍摄界面
     //
     
-    var captureView = CaptureView()
+    var captureView: CaptureView!
     
     var flashButton = SimpleButton()
     var flipButton = SimpleButton()
@@ -47,6 +47,7 @@ public class CameraView: UIView {
     public convenience init(configuration: CameraViewConfiguration) {
         self.init()
         self.configuration = configuration
+        self.captureView = CaptureView(configuration: configuration)
         setup()
     }
     
@@ -524,6 +525,7 @@ extension CameraView {
     
     @objc private func onGuideLabelFadeOut() {
         
+        // 引导文字淡出消失
         UIView.animate(
             withDuration: 0.8,
             delay: 0,
@@ -545,13 +547,10 @@ extension CameraView {
 //
 
 extension CameraView: CircleViewDelegate {
-    
-    public func circleViewDidTouchDown(_ circleView: CircleView) {
-        
-    }
-    
+
     public func circleViewDidLongPressStart(_ circleView: CircleView) {
         if circleView == captureButton {
+            // 长按触发录制视频
             cameraManager.startVideoRecording()
             startRecordingTimer()
         }
@@ -564,21 +563,22 @@ extension CameraView: CircleViewDelegate {
     }
     
     public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool, _ isLongPress: Bool) {
-        if inside && !isLongPress {
-            if circleView == captureButton {
-                cameraManager.capturePhoto()
+        guard inside else {
+            return
+        }
+        if circleView == captureButton && !isLongPress {
+            cameraManager.capturePhoto()
+        }
+        else if circleView == cancelButton {
+            hidePreviewView()
+        }
+        else if circleView == okButton {
+            hidePreviewView()
+            if cameraManager.videoPath != "" {
+                delegate?.cameraViewDidPickVideo(self, "", 1)
             }
-            else if circleView == cancelButton {
-                hidePreviewView()
-            }
-            else if circleView == okButton {
-                hidePreviewView()
-                if cameraManager.videoPath != "" {
-                    delegate?.cameraViewDidPickVideo(self, "", 1)
-                }
-                else {
-                    delegate?.cameraViewDidPickPhoto(self, "", 1, 1)
-                }
+            else {
+                delegate?.cameraViewDidPickPhoto(self, "", 1, 1)
             }
         }
     }

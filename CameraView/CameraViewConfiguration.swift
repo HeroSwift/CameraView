@@ -118,6 +118,21 @@ public class CameraViewConfiguration {
     
     public var cancelButtonRingWidth: CGFloat = 0
     
+    
+    // 聚焦视图的宽度
+    public var focusViewWidth: CGFloat = 40
+    
+    // 聚焦视图的高度
+    public var focusViewHeight: CGFloat = 40
+    
+    // 聚焦视图的颜色
+    public var focusViewColor = UIColor.green
+    
+    // 聚焦视图的粗细
+    public var focusViewThickness: CGFloat = 1 / UIScreen.main.scale
+    
+    public var focusViewCrossLength: CGFloat = 6
+    
     public init() { }
     
 }

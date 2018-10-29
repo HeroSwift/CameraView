@@ -16,6 +16,9 @@
 		9D4350582185E67000084889 /* CircleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350562185E67000084889 /* CircleViewDelegate.swift */; };
 		9D43505A2185E68E00084889 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350592185E68E00084889 /* CaptureView.swift */; };
 		9D43505C2185E6A600084889 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43505B2185E6A600084889 /* PreviewView.swift */; };
+		9D43505E2185F28E00084889 /* CameraViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43505D2185F28E00084889 /* CameraViewController.swift */; };
+		9D4350602185F4B100084889 /* CameraViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43505F2185F4B100084889 /* CameraViewDelegate.swift */; };
+		9D4350AC2186B85D00084889 /* FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350AB2186B85D00084889 /* FocusView.swift */; };
 		9D659B522148B9E7007899CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B512148B9E7007899CC /* AppDelegate.swift */; };
 		9D659B542148B9E7007899CC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D659B532148B9E7007899CC /* ViewController.swift */; };
 		9D659B572148B9E7007899CC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9D659B552148B9E7007899CC /* Main.storyboard */; };
@@ -43,6 +46,9 @@
 		9D4350562185E67000084889 /* CircleViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleViewDelegate.swift; sourceTree = "<group>"; };
 		9D4350592185E68E00084889 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
 		9D43505B2185E6A600084889 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		9D43505D2185F28E00084889 /* CameraViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewController.swift; sourceTree = "<group>"; };
+		9D43505F2185F4B100084889 /* CameraViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewDelegate.swift; sourceTree = "<group>"; };
+		9D4350AB2186B85D00084889 /* FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusView.swift; sourceTree = "<group>"; };
 		9D659B402148B9D0007899CC /* CameraView.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CameraView.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D659B442148B9D0007899CC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9D659B4F2148B9E7007899CC /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -98,11 +104,14 @@
 				9D4350562185E67000084889 /* CircleViewDelegate.swift */,
 				9D659B442148B9D0007899CC /* Info.plist */,
 				9D43504B2185DD5A00084889 /* Assets.xcassets */,
-				9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */,
 				9D43504F2185E5CE00084889 /* CameraView.swift */,
 				9D4350512185E62500084889 /* CameraManager.swift */,
 				9D4350592185E68E00084889 /* CaptureView.swift */,
 				9D43505B2185E6A600084889 /* PreviewView.swift */,
+				9D4350AB2186B85D00084889 /* FocusView.swift */,
+				9D43505D2185F28E00084889 /* CameraViewController.swift */,
+				9D43505F2185F4B100084889 /* CameraViewDelegate.swift */,
+				9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */,
 			);
 			path = CameraView;
 			sourceTree = "<group>";
@@ -241,6 +250,9 @@
 				9D4350522185E62500084889 /* CameraManager.swift in Sources */,
 				9D4350502185E5CE00084889 /* CameraView.swift in Sources */,
 				9D4350542185E66400084889 /* SimpleButton.swift in Sources */,
+				9D4350602185F4B100084889 /* CameraViewDelegate.swift in Sources */,
+				9D4350AC2186B85D00084889 /* FocusView.swift in Sources */,
+				9D43505E2185F28E00084889 /* CameraViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,6 +437,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				PRODUCT_BUNDLE_IDENTIFIER = com.finstao.CameraView;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -454,6 +467,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MACH_O_TYPE = staticlib;
 				PRODUCT_BUNDLE_IDENTIFIER = com.finstao.CameraView;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;

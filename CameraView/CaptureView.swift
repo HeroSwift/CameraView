@@ -9,12 +9,13 @@ class CaptureView: UIView {
     var onZoomStart: (() -> Void)?
     var onZoomFactorChange: ((CGFloat) -> Void)?
     
-    private let focusView = UIView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+    private var focusView: FocusView!
     
     private var previewLayer: AVCaptureVideoPreviewLayer?
     
-    convenience init() {
+    convenience init(configuration: CameraViewConfiguration) {
         self.init(frame: .zero)
+        self.focusView = FocusView(configuration: configuration)
         setup()
     }
     
@@ -39,7 +40,6 @@ class CaptureView: UIView {
         pinchGesture.delegate = self
         addGestureRecognizer(pinchGesture)
         
-        focusView.backgroundColor = .white
         focusView.isHidden = true
         focusView.alpha = 0
         addSubview(focusView)
