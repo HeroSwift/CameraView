@@ -36,7 +36,7 @@ public class CameraView: UIView {
     
     private var configuration: CameraViewConfiguration!
     
-    private var cameraManager = CameraManager()
+    private var cameraManager: CameraManager!
     
     private var cameraIsReady = false
     
@@ -47,6 +47,7 @@ public class CameraView: UIView {
     public convenience init(configuration: CameraViewConfiguration) {
         self.init()
         self.configuration = configuration
+        self.cameraManager = CameraManager(configuration: configuration)
         self.captureView = CaptureView(configuration: configuration)
         setup()
     }
@@ -514,10 +515,10 @@ extension CameraView {
         }
         
         let currentTime = output.recordedDuration.seconds
-        captureButton.trackValue = currentTime / cameraManager.maxVideoDuration
+        captureButton.trackValue = currentTime / configuration.videoMaxDuration
         captureButton.setNeedsDisplay()
         
-        if currentTime >= cameraManager.maxVideoDuration {
+        if currentTime >= configuration.videoMaxDuration {
             cameraManager.stopVideoRecording()
         }
         

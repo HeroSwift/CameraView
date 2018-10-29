@@ -39,13 +39,13 @@ public class CameraViewConfiguration {
     public var captureButtonRingWidthRecording: CGFloat = 30
     
     // 录制按钮圆环颜色
-    public var captureButtonRingColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 1)
+    public var captureButtonRingColor = UIColor(red: 230 / 255, green: 230 / 255, blue: 230 / 255, alpha: 0.9)
     
     // 录制按钮进度条轨道的大小
     public var captureButtonTrackWidth: CGFloat = 4
     
     // 录制按钮进度条轨道的颜色
-    public var captureButtonTrackColor = UIColor(red: 41 / 255, green: 181 / 255, blue: 234 / 255, alpha: 1)
+    public var captureButtonTrackColor = UIColor(red: 0.11, green: 0.64, blue: 0.06, alpha: 0.9)
     
     // 录制按钮与底边的距离
     public var captureButtonMarginBottom: CGFloat = 50
@@ -132,6 +132,18 @@ public class CameraViewConfiguration {
     public var focusViewThickness: CGFloat = 1 / UIScreen.main.scale
     
     public var focusViewCrossLength: CGFloat = 6
+    
+    // 视频保存的目录
+    public var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+    
+    // 视频文件扩展名
+    public var videoExtname = ".mp4"
+    
+    // 视频最短录制时长
+    public var videoMinDuration: TimeInterval = 1
+    
+    // 视频最大录制时长
+    public var videoMaxDuration: TimeInterval = 10
     
     public init() { }
     

@@ -79,21 +79,8 @@ class CameraManager : NSObject {
     
     // MARK: - 录制视频的配置
     
-    // 保存视频文件的目录
-    var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
-    
     // 当前正在录制的视频文件路径
     var videoPath = ""
-    
-    var videoExtname = ".mp4"
-    
-    // 录制视频的最小时长，单位为秒
-    var minVideoDuration = Double(1)
-    
-    // 录制视频的最大时长，单位为秒
-    var maxVideoDuration = Double(10)
-    
-    
     
     //
     // MARK: - 拍照的配置
@@ -145,6 +132,13 @@ class CameraManager : NSObject {
         }
     }
     
+    private var configuration: CameraViewConfiguration!
+    
+    convenience init(configuration: CameraViewConfiguration) {
+        self.init()
+        self.configuration = configuration
+    }
+    
 }
 
 extension CameraManager {
@@ -191,6 +185,8 @@ extension CameraManager {
             return
         }
         
+        let videoDir = configuration.videoDir
+        
         let fileManager = FileManager.default
         if !fileManager.fileExists(atPath: videoDir) {
             try? fileManager.createDirectory(atPath: videoDir, withIntermediateDirectories: true, attributes: nil)
@@ -220,7 +216,7 @@ extension CameraManager {
         let format = DateFormatter()
         format.dateFormat = "yyyy_MM_dd_HH_mm_ss"
 
-        videoPath = "\(videoDir)/\(format.string(from: Date()))\(videoExtname)"
+        videoPath = "\(videoDir)/\(format.string(from: Date()))\(configuration.videoExtname)"
         
         output.startRecording(to: URL(fileURLWithPath: videoPath), recordingDelegate: self)
         
@@ -538,7 +534,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
         var success = false
         
         if error == nil {
-            if output.recordedDuration.seconds >= minVideoDuration {
+            if output.recordedDuration.seconds >= configuration.videoMinDuration {
                 success = true
                 onFinishRecordVideo?(videoPath, nil)
             }
