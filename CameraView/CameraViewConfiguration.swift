@@ -133,6 +133,9 @@ public class CameraViewConfiguration {
     
     public var focusViewCrossLength: CGFloat = 6
     
+    // 图片保存的目录
+    public var photoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+    
     // 视频保存的目录
     public var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
     

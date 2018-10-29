@@ -185,13 +185,6 @@ extension CameraManager {
             return
         }
         
-        let videoDir = configuration.videoDir
-        
-        let fileManager = FileManager.default
-        if !fileManager.fileExists(atPath: videoDir) {
-            try? fileManager.createDirectory(atPath: videoDir, withIntermediateDirectories: true, attributes: nil)
-        }
-        
         if UIDevice.current.isMultitaskingSupported {
             backgroundRecordingId = UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
         }
@@ -213,10 +206,7 @@ extension CameraManager {
         // 重置
         photo = nil
         
-        let format = DateFormatter()
-        format.dateFormat = "yyyy_MM_dd_HH_mm_ss"
-
-        videoPath = "\(videoDir)/\(format.string(from: Date()))\(configuration.videoExtname)"
+        videoPath = getFilePath(dirname: configuration.videoDir, extname: configuration.videoExtname)
         
         output.startRecording(to: URL(fileURLWithPath: videoPath), recordingDelegate: self)
         
@@ -759,6 +749,52 @@ extension CameraManager {
         }
         
     }
+}
+
+extension CameraManager {
+    
+    // 获取视频第一帧画面
+    func getVideoFirstFrame() -> UIImage {
+        
+        let avAsset = AVAsset.init(url: URL(fileURLWithPath: videoPath))
+        let generator = AVAssetImageGenerator.init(asset: avAsset)
+        generator.appliesPreferredTrackTransform = true
+        
+        let time = CMTimeMakeWithSeconds(0.0, 600) // 取第0秒， 一秒600帧
+        var actualTime = CMTimeMake(0, 0)
+        let cgImage = try! generator.copyCGImage(at: time, actualTime: &actualTime)
+        
+        return UIImage(cgImage: cgImage)
+        
+    }
+    
+    // 把图片保存到磁盘
+    func saveToDisk(image: UIImage, compressionQuality: CGFloat = 0.7) -> Bool {
+        
+        if let imageData = UIImageJPEGRepresentation(image, compressionQuality) as NSData? {
+            let filePath = getFilePath(dirname: configuration.photoDir, extname: ".jpeg")
+            return imageData.write(toFile: filePath, atomically: true)
+        }
+        
+        return false
+        
+    }
+    
+    // 生成一个文件路径
+    func getFilePath(dirname: String, extname: String) -> String {
+
+        let fileManager = FileManager.default
+        if !fileManager.fileExists(atPath: dirname) {
+            try? fileManager.createDirectory(atPath: dirname, withIntermediateDirectories: true, attributes: nil)
+        }
+        
+        let format = DateFormatter()
+        format.dateFormat = "yyyy_MM_dd_HH_mm_ss"
+        
+        return "\(dirname)/\(format.string(from: Date()))\(extname)"
+        
+    }
+    
 }
 
 extension CameraManager {
