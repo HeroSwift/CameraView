@@ -55,7 +55,11 @@ extension CameraViewController: CameraViewDelegate {
         dismiss(animated: true, completion: nil)
     }
     
-    public func cameraViewDidSubmit(_ cameraView: CameraView, _ filePath: String, _ duration: TimeInterval) {
+    public func cameraViewDidPickPhoto(_ cameraView: CameraView, _ filePath: String, _ width: CGFloat, _ height: CGFloat) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    public func cameraViewDidPickVideo(_ cameraView: CameraView, _ filePath: String, _ duration: TimeInterval) {
         dismiss(animated: true, completion: nil)
     }
 }

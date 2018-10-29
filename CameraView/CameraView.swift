@@ -573,7 +573,12 @@ extension CameraView: CircleViewDelegate {
             }
             else if circleView == okButton {
                 hidePreviewView()
-                delegate?.cameraViewDidPickPhoto(self, "", 1, 1)
+                if cameraManager.videoPath != "" {
+                    delegate?.cameraViewDidPickVideo(self, "", 1)
+                }
+                else {
+                    delegate?.cameraViewDidPickPhoto(self, "", 1, 1)
+                }
             }
         }
     }

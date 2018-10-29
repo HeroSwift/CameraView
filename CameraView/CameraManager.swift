@@ -72,6 +72,11 @@ class CameraManager : NSObject {
         }
     }
     
+    // MARK: - 拍照的配置
+    
+    // 当前拍好的照片
+    var photo: UIImage?
+    
     // MARK: - 录制视频的配置
     
     // 保存视频文件的目录
@@ -209,9 +214,12 @@ extension CameraManager {
             setTorchMode(.auto)
         }
         
+        // 重置
+        photo = nil
+        
         let format = DateFormatter()
         format.dateFormat = "yyyy_MM_dd_HH_mm_ss"
-        
+
         videoPath = "\(videoDir)/\(format.string(from: Date()))\(videoExtname)"
         
         output.startRecording(to: URL(fileURLWithPath: videoPath), recordingDelegate: self)
@@ -502,8 +510,9 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         }
         else if let buffer = photoSampleBuffer,
             let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer, previewPhotoSampleBuffer: nil),
-            let image = UIImage(data: data) {
-            onFinishCapturePhoto?(image, nil)
+            let photo = UIImage(data: data) {
+            self.photo = photo
+            onFinishCapturePhoto?(photo, nil)
         }
         else {
             onFinishCapturePhoto?(nil, CameraError.unknown)
@@ -709,6 +718,8 @@ extension CameraManager {
         settings.flashMode = flashMode
         settings.isHighResolutionPhotoEnabled = isHighResolutionEnabled
         
+        // 重置
+        photo = nil
         videoPath = ""
         
         let output = photoOutput as! AVCapturePhotoOutput
@@ -729,7 +740,11 @@ extension CameraManager {
         
         let output = photoOutput as! AVCaptureStillImageOutput
         if let connection = output.connection(with: .video) {
+            
+            // 重置
+            photo = nil
             videoPath = ""
+            
             output.captureStillImageAsynchronously(from: connection) { (sampleBuffer, error) in
                 if let sampleBuffer = sampleBuffer {
                     let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
@@ -738,9 +753,11 @@ extension CameraManager {
                     
                     // Set proper orientation for photo
                     // If camera is currently set to front camera, flip image
-                    let image = UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: self.getImageOrientation(deviceOrientation: self.deviceOrientation))
-                    self.onFinishCapturePhoto?(image, nil)
+                    let photo = UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: self.getImageOrientation(deviceOrientation: self.deviceOrientation))
+                    self.photo = photo
                     
+                    self.onFinishCapturePhoto?(photo, nil)
+
                 }
             }
         }
