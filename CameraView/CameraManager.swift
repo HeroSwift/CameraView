@@ -95,6 +95,12 @@ class CameraManager : NSObject {
     // live 图片的保存目录
     var livePhotoDir = NSTemporaryDirectory()
     
+    //
+    // MARK: - 状态
+    //
+    
+    // 视频是否正在录制
+    var isVideoRecording = false
     
     
     //
@@ -128,7 +134,13 @@ class CameraManager : NSObject {
     // 当前使用的摄像头
     var currentCamera: AVCaptureDevice? {
         get {
-            return cameraPosition == .back ? backCamera : frontCamera
+            if cameraPosition == .back {
+                return backCamera
+            }
+            else if cameraPosition == .front {
+                return frontCamera
+            }
+            return nil
         }
     }
     
@@ -169,6 +181,10 @@ extension CameraManager {
     // 拍照
     func capturePhoto() {
         
+        guard let device = currentCamera else {
+            return
+        }
+        
         if #available(iOS 10.0, *) {
             capturePhoto10()
         }
@@ -179,9 +195,9 @@ extension CameraManager {
     }
     
     // 录制视频
-    func startVideoRecording() {
+    func startRecordVideo() {
         
-        guard let output = videoOutput, !output.isRecording else {
+        guard let _ = currentCamera, let output = videoOutput, !output.isRecording else {
             return
         }
         
@@ -210,9 +226,11 @@ extension CameraManager {
         
         output.startRecording(to: URL(fileURLWithPath: videoPath), recordingDelegate: self)
         
+        isVideoRecording = true
+        
     }
     
-    func stopVideoRecording() {
+    func stopRecordVideo() {
         
         guard let output = videoOutput, output.isRecording else {
             return
@@ -512,6 +530,8 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
     
     public func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         
+        isVideoRecording = false
+        
         if let taskId = backgroundRecordingId {
             UIApplication.shared.endBackgroundTask(taskId)
             backgroundRecordingId = nil
@@ -520,7 +540,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
         if flashMode != .off {
             setTorchMode(.off)
         }
-        
+
         var success = false
         
         if error == nil {

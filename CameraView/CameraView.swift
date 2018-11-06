@@ -1,6 +1,9 @@
 
 import UIKit
 
+import SimpleButton
+import CircleView
+
 public class CameraView: UIView {
     
     var delegate: CameraViewDelegate?
@@ -519,7 +522,7 @@ extension CameraView {
         captureButton.setNeedsDisplay()
         
         if currentTime >= configuration.videoMaxDuration {
-            cameraManager.stopVideoRecording()
+            cameraManager.stopRecordVideo()
         }
         
     }
@@ -552,14 +555,18 @@ extension CameraView: CircleViewDelegate {
     public func circleViewDidLongPressStart(_ circleView: CircleView) {
         if circleView == captureButton {
             // 长按触发录制视频
-            cameraManager.startVideoRecording()
-            startRecordingTimer()
+            cameraManager.startRecordVideo()
+            if cameraManager.isVideoRecording {
+                startRecordingTimer()
+            }
         }
     }
     
     public func circleViewDidLongPressEnd(_ circleView: CircleView) {
         if circleView == captureButton {
-            cameraManager.stopVideoRecording()
+            if cameraManager.isVideoRecording {
+                cameraManager.stopRecordVideo()
+            }
         }
     }
     
