@@ -6,7 +6,7 @@ import CircleView
 
 public class CameraView: UIView {
     
-    var delegate: CameraViewDelegate?
+    var delegate: CameraViewDelegate!
     
     //
     // MARK: - 拍摄界面
@@ -84,11 +84,11 @@ public class CameraView: UIView {
         }
         
         cameraManager.onPermissionsGranted = {
-            self.delegate?.cameraViewDidPermissionsGranted(self)
+            self.delegate.cameraViewDidPermissionsGranted(self)
         }
         
         cameraManager.onPermissionsDenied = {
-            self.delegate?.cameraViewDidPermissionsDenied(self)
+            self.delegate.cameraViewDidPermissionsDenied(self)
         }
         
         cameraManager.onCaptureWithoutPermissions = {
@@ -96,7 +96,7 @@ public class CameraView: UIView {
         }
         
         cameraManager.onRecordVideoDurationLessThanMinDuration = {
-            self.delegate?.cameraViewDidRecordDurationLessThanMinDuration(self)
+            self.delegate.cameraViewDidRecordDurationLessThanMinDuration(self)
         }
         
         cameraManager.onFinishCapturePhoto =  { (photo, error) in
@@ -374,7 +374,7 @@ extension CameraView {
         ])
         
         exitButton.onClick = {
-            self.delegate?.cameraViewDidExit(self)
+            self.delegate.cameraViewDidExit(self)
         }
         
     }
@@ -571,10 +571,10 @@ extension CameraView: CircleViewDelegate {
     }
     
     public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool, _ isLongPress: Bool) {
-        guard inside else {
+        guard inside, isLongPress else {
             return
         }
-        if circleView == captureButton && !isLongPress {
+        if circleView == captureButton {
             cameraManager.capturePhoto()
         }
         else if circleView == cancelButton {
@@ -583,10 +583,13 @@ extension CameraView: CircleViewDelegate {
         else if circleView == okButton {
             hidePreviewView()
             if cameraManager.videoPath != "" {
-                delegate?.cameraViewDidPickVideo(self, "", 1)
+                // 保存图片
+                let filePath = cameraManager.saveToDisk(image: <#T##UIImage#>)
+                
+                delegate.cameraViewDidPickVideo(self, "", 1)
             }
             else {
-                delegate?.cameraViewDidPickPhoto(self, "", 1, 1)
+                delegate.cameraViewDidPickPhoto(self, "", 1, 1)
             }
         }
     }
