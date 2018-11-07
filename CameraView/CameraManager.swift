@@ -105,10 +105,15 @@ class CameraManager : NSObject {
     // 视频是否正在录制
     var isVideoRecording = false
     
+    // 是否准备就绪
+    var isDeviceReady = false
+    
     
     //
     // MARK: - 回调
     //
+    
+    var onDeviceReady: (() -> Void)?
     
     var onFlashModeChange: (() -> Void)?
     
@@ -163,6 +168,17 @@ extension CameraManager {
         
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
+            if !isDeviceReady {
+                prepare { error in
+                    if let error = error {
+                        print(error)
+                    }
+                    else {
+                        self.isDeviceReady = true
+                        self.onDeviceReady?()
+                    }
+                }
+            }
             return true
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
@@ -187,6 +203,7 @@ extension CameraManager {
     func capturePhoto() {
         
         guard requestPermissions() else {
+            onCaptureWithoutPermissions?()
             return
         }
         
@@ -202,7 +219,12 @@ extension CameraManager {
     // 录制视频
     func startRecordVideo() {
         
-        guard requestPermissions(), let output = videoOutput, !output.isRecording else {
+        guard requestPermissions() else {
+            onCaptureWithoutPermissions?()
+            return
+        }
+        
+        guard let output = videoOutput, !output.isRecording else {
             return
         }
         
@@ -390,11 +412,7 @@ extension CameraManager {
         
     }
     
-    func prepare(completionHandler: @escaping (Error?) -> Void) {
-        
-        if AVCaptureDevice.authorizationStatus(for: .video) != .authorized {
-            onCaptureWithoutPermissions?()
-        }
+    private func prepare(completionHandler: @escaping (Error?) -> Void) {
         
         // 枚举音视频设备
         func configureCaptureDevices() throws {

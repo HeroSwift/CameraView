@@ -52,7 +52,7 @@ public class CameraViewConfiguration {
     
     
     // 切换摄像头按钮与顶边的距离
-    public var flipButtonMarginTop: CGFloat = 24
+    public var flipButtonMarginTop: CGFloat = 15
     
     // 切换摄像头按钮与右边的距离
     public var flipButtonMarginRight: CGFloat = 20

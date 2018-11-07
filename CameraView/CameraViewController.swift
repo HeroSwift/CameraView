@@ -5,9 +5,9 @@ public class CameraViewController: UIViewController {
     
     public var configuration: CameraViewConfiguration!
     
-    public var onPhotoPicked: ((String) -> Void)?
+    public var onPhotoPicked: ((String, CGFloat, CGFloat) -> Void)?
     
-    public var onVideoPicked: ((String, Int) -> Void)?
+    public var onVideoPicked: ((String, TimeInterval, String, CGFloat, CGFloat) -> Void)?
     
     public override var prefersStatusBarHidden: Bool {
         return true
@@ -55,11 +55,13 @@ extension CameraViewController: CameraViewDelegate {
         dismiss(animated: true, completion: nil)
     }
     
-    public func cameraViewDidPickPhoto(_ cameraView: CameraView, _ filePath: String, _ width: CGFloat, _ height: CGFloat) {
+    public func cameraViewDidPickPhoto(_ cameraView: CameraView, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) {
         dismiss(animated: true, completion: nil)
+        onPhotoPicked?(photoPath, photoWidth, photoHeight)
     }
     
-    public func cameraViewDidPickVideo(_ cameraView: CameraView, _ filePath: String, _ duration: TimeInterval) {
+    public func cameraViewDidPickVideo(_ cameraView: CameraView, videoPath: String, videoDuration: TimeInterval, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) {
         dismiss(animated: true, completion: nil)
+        onVideoPicked?(videoPath, videoDuration, photoPath, photoWidth, photoHeight)
     }
 }

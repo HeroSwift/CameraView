@@ -67,6 +67,15 @@ public class CameraView: UIView {
         
         backgroundColor = .clear
         
+        cameraManager.onDeviceReady = {
+            self.captureView.bind(
+                session: self.cameraManager.captureSession,
+                orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
+            )
+            self.cameraIsReady = true
+            self.cameraIsCapturing = true
+        }
+        
         cameraManager.onFlashModeChange = {
             
             switch self.cameraManager.flashMode {
@@ -92,7 +101,7 @@ public class CameraView: UIView {
         }
         
         cameraManager.onCaptureWithoutPermissions = {
-            print("onCaptureWithoutPermissions")
+            self.delegate.cameraViewWillCaptureWithoutPermissions(self)
         }
         
         cameraManager.onRecordVideoDurationLessThanMinDuration = {
@@ -261,21 +270,7 @@ extension CameraView {
         addCaptureButton()
         addExitButton()
         addGuideLabel()
-        
-        cameraManager.prepare { error in
-            if let error = error {
-                print(error)
-            }
-            else {
-                self.captureView.bind(
-                    session: self.cameraManager.captureSession,
-                    orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
-                )
-                self.cameraIsReady = true
-                self.cameraIsCapturing = true
-            }
-        }
-        
+
     }
     
     private func addFlipButton() {
@@ -570,8 +565,12 @@ extension CameraView: CircleViewDelegate {
         }
     }
     
+    public func circleViewDidTouchDown(_ circleView: CircleView) {
+        print(circleView)
+    }
+    
     public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool, _ isLongPress: Bool) {
-        guard inside, isLongPress else {
+        guard inside, !isLongPress else {
             return
         }
         if circleView == captureButton {
@@ -585,7 +584,12 @@ extension CameraView: CircleViewDelegate {
             if let photo = cameraManager.photo {
                 // 保存图片
                 if let photoPath = cameraManager.saveToDisk(image: photo) {
-                    delegate.cameraViewDidPickPhoto(self, photoPath: photoPath, photoWidth: photo.size.width, photoHeight: photo.size.height)
+                    delegate.cameraViewDidPickPhoto(
+                        self,
+                        photoPath: photoPath,
+                        photoWidth: photo.size.width,
+                        photoHeight: photo.size.height
+                    )
                 }
             }
             else if let photo = cameraManager.getVideoFirstFrame(videoPath: cameraManager.videoPath) {
@@ -594,7 +598,7 @@ extension CameraView: CircleViewDelegate {
                     delegate.cameraViewDidPickVideo(
                         self,
                         videoPath: cameraManager.videoPath,
-                        duration: cameraManager.videoDuration,
+                        videoDuration: cameraManager.videoDuration,
                         photoPath: photoPath,
                         photoWidth: photo.size.width,
                         photoHeight: photo.size.height
