@@ -7,10 +7,10 @@ public protocol CameraViewDelegate {
     func cameraViewDidExit(_ cameraView: CameraView)
     
     // 点击确定按钮选择照片
-    func cameraViewDidPickPhoto(_ cameraView: CameraView, _ filePath: String, _ width: CGFloat, _ height: CGFloat)
+    func cameraViewDidPickPhoto(_ cameraView: CameraView, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat)
     
     // 点击确定按钮选择视频
-    func cameraViewDidPickVideo(_ cameraView: CameraView, _ filePath: String, _ duration: TimeInterval)
+    func cameraViewDidPickVideo(_ cameraView: CameraView, videoPath: String, duration: TimeInterval, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat)
     
     // 录制视频时间太短
     func cameraViewDidRecordDurationLessThanMinDuration(_ cameraView: CameraView)
@@ -27,9 +27,9 @@ public extension CameraViewDelegate {
     
     func cameraViewDidExit(_ cameraView: CameraView) { }
     
-    func cameraViewDidPickPhoto(_ cameraView: CameraView, _ filePath: String, _ width: CGFloat, _ height: CGFloat) { }
+    func cameraViewDidPickPhoto(_ cameraView: CameraView, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) { }
     
-    func cameraViewDidPickVideo(_ cameraView: CameraView, _ filePath: String, _ duration: TimeInterval) { }
+    func cameraViewDidPickVideo(_ cameraView: CameraView, videoPath: String, duration: TimeInterval, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) { }
 
     func cameraViewDidRecordDurationLessThanMinDuration(_ cameraView: CameraView) { }
     

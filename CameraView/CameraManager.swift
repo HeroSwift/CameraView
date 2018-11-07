@@ -82,6 +82,9 @@ class CameraManager : NSObject {
     // 当前正在录制的视频文件路径
     var videoPath = ""
     
+    // 录制完成后视频的时长
+    var videoDuration: Double = 0
+    
     //
     // MARK: - 拍照的配置
     //
@@ -156,12 +159,11 @@ class CameraManager : NSObject {
 extension CameraManager {
     
     // 申请权限
-    func requestPermissions() {
+    func requestPermissions() -> Bool {
         
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            // 已授权
-            break
+            return true
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
                 if granted {
@@ -176,12 +178,15 @@ extension CameraManager {
             // 拒绝
             break
         }
+        
+        return false
+        
     }
     
     // 拍照
     func capturePhoto() {
         
-        guard let device = currentCamera else {
+        guard requestPermissions() else {
             return
         }
         
@@ -197,7 +202,7 @@ extension CameraManager {
     // 录制视频
     func startRecordVideo() {
         
-        guard let _ = currentCamera, let output = videoOutput, !output.isRecording else {
+        guard requestPermissions(), let output = videoOutput, !output.isRecording else {
             return
         }
         
@@ -544,7 +549,8 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
         var success = false
         
         if error == nil {
-            if output.recordedDuration.seconds >= configuration.videoMinDuration {
+            videoDuration = output.recordedDuration.seconds
+            if videoDuration >= configuration.videoMinDuration {
                 success = true
                 onFinishRecordVideo?(videoPath, nil)
             }
@@ -584,7 +590,7 @@ extension CameraManager: AVCaptureMetadataOutputObjectsDelegate {
             
             let qrcodeObject = metadataObject as! AVMetadataMachineReadableCodeObject
             
-            if let stringValue = qrcodeObject.stringValue {
+            if let _ = qrcodeObject.stringValue {
                 
             }
             
@@ -774,7 +780,7 @@ extension CameraManager {
 extension CameraManager {
     
     // 获取视频第一帧画面
-    func getVideoFirstFrame() -> UIImage {
+    func getVideoFirstFrame(videoPath: String) -> UIImage? {
         
         let avAsset = AVAsset.init(url: URL(fileURLWithPath: videoPath))
         let generator = AVAssetImageGenerator.init(asset: avAsset)
@@ -782,9 +788,16 @@ extension CameraManager {
         
         let time = CMTimeMakeWithSeconds(0.0, 600) // 取第0秒， 一秒600帧
         var actualTime = CMTimeMake(0, 0)
-        let cgImage = try! generator.copyCGImage(at: time, actualTime: &actualTime)
         
-        return UIImage(cgImage: cgImage)
+        do {
+            let cgImage = try generator.copyCGImage(at: time, actualTime: &actualTime)
+            return UIImage(cgImage: cgImage)
+        }
+        catch {
+            print(error.localizedDescription)
+        }
+        
+        return nil
         
     }
     

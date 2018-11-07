@@ -196,8 +196,8 @@ public class CameraView: UIView {
         
     }
     
-    public func requestPermissions() {
-        cameraManager.requestPermissions()
+    public func requestPermissions() -> Bool {
+        return cameraManager.requestPermissions()
     }
     
     public override func layoutSubviews() {
@@ -582,14 +582,24 @@ extension CameraView: CircleViewDelegate {
         }
         else if circleView == okButton {
             hidePreviewView()
-            if cameraManager.videoPath != "" {
+            if let photo = cameraManager.photo {
                 // 保存图片
-                let filePath = cameraManager.saveToDisk(image: <#T##UIImage#>)
-                
-                delegate.cameraViewDidPickVideo(self, "", 1)
+                if let photoPath = cameraManager.saveToDisk(image: photo) {
+                    delegate.cameraViewDidPickPhoto(self, photoPath: photoPath, photoWidth: photo.size.width, photoHeight: photo.size.height)
+                }
             }
-            else {
-                delegate.cameraViewDidPickPhoto(self, "", 1, 1)
+            else if let photo = cameraManager.getVideoFirstFrame(videoPath: cameraManager.videoPath) {
+                // 保存视频截图
+                if let photoPath = cameraManager.saveToDisk(image: photo) {
+                    delegate.cameraViewDidPickVideo(
+                        self,
+                        videoPath: cameraManager.videoPath,
+                        duration: cameraManager.videoDuration,
+                        photoPath: photoPath,
+                        photoWidth: photo.size.width,
+                        photoHeight: photo.size.height
+                    )
+                }
             }
         }
     }
