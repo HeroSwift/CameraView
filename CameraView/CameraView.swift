@@ -108,7 +108,7 @@ public class CameraView: UIView {
             self.delegate.cameraViewDidRecordDurationLessThanMinDuration(self)
         }
         
-        cameraManager.onFinishCapturePhoto =  { (photo, error) in
+        cameraManager.onFinishCapturePhoto = { (photo, error) in
             if let error = error {
                 print(error.localizedDescription)
             }

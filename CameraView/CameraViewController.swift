@@ -9,6 +9,14 @@ public class CameraViewController: UIViewController {
     
     public var onVideoPicked: ((String, TimeInterval, String, CGFloat, CGFloat) -> Void)?
     
+    public var onRecordLessThanMinDuration: (() -> Void)?
+    
+    public var onCaptureWithoutPermissions: (() -> Void)?
+    
+    public var onPermissionsGranted: (() -> Void)?
+    
+    public var onPermissionsDenied: (() -> Void)?
+    
     public override var prefersStatusBarHidden: Bool {
         return true
     }
@@ -66,19 +74,19 @@ extension CameraViewController: CameraViewDelegate {
     }
     
     public func cameraViewDidRecordDurationLessThanMinDuration(_ cameraView: CameraView) {
-        print("cameraViewDidRecordDurationLessThanMinDuration")
+        onRecordLessThanMinDuration?()
     }
     
     public func cameraViewWillCaptureWithoutPermissions(_ cameraView: CameraView) {
-        print("cameraViewWillCaptureWithoutPermissions")
+        onCaptureWithoutPermissions?()
     }
     
     public func cameraViewDidPermissionsGranted(_ cameraView: CameraView) {
-        print("cameraViewDidPermissionsGranted")
+        onPermissionsGranted?()
     }
     
     public func cameraViewDidPermissionsDenied(_ cameraView: CameraView) {
-        print("cameraViewDidPermissionsDenied")
+        onPermissionsDenied?()
     }
     
 }
