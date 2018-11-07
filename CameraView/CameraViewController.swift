@@ -3,19 +3,16 @@ import UIKit
 
 public class CameraViewController: UIViewController {
     
-    public var configuration: CameraViewConfiguration!
+    private var cameraView: CameraView!
     
-    public var onPhotoPicked: ((String, CGFloat, CGFloat) -> Void)?
-    
-    public var onVideoPicked: ((String, TimeInterval, String, CGFloat, CGFloat) -> Void)?
-    
-    public var onRecordLessThanMinDuration: (() -> Void)?
-    
-    public var onCaptureWithoutPermissions: (() -> Void)?
-    
-    public var onPermissionsGranted: (() -> Void)?
-    
-    public var onPermissionsDenied: (() -> Void)?
+    public convenience init(configuration: CameraViewConfiguration, delegate: CameraViewDelegate) {
+        
+        self.init()
+        
+        self.cameraView = CameraView(configuration: configuration)
+        cameraView.delegate = delegate
+
+    }
     
     public override var prefersStatusBarHidden: Bool {
         return true
@@ -24,8 +21,6 @@ public class CameraViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        let cameraView = CameraView(configuration: configuration)
-        cameraView.delegate = self
         cameraView.translatesAutoresizingMaskIntoConstraints = false
         
         cameraView.requestPermissions()
@@ -57,36 +52,4 @@ public class CameraViewController: UIViewController {
     
 }
 
-extension CameraViewController: CameraViewDelegate {
-    
-    public func cameraViewDidExit(_ cameraView: CameraView) {
-        dismiss(animated: true, completion: nil)
-    }
-    
-    public func cameraViewDidPickPhoto(_ cameraView: CameraView, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) {
-        dismiss(animated: true, completion: nil)
-        onPhotoPicked?(photoPath, photoWidth, photoHeight)
-    }
-    
-    public func cameraViewDidPickVideo(_ cameraView: CameraView, videoPath: String, videoDuration: TimeInterval, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) {
-        dismiss(animated: true, completion: nil)
-        onVideoPicked?(videoPath, videoDuration, photoPath, photoWidth, photoHeight)
-    }
-    
-    public func cameraViewDidRecordDurationLessThanMinDuration(_ cameraView: CameraView) {
-        onRecordLessThanMinDuration?()
-    }
-    
-    public func cameraViewWillCaptureWithoutPermissions(_ cameraView: CameraView) {
-        onCaptureWithoutPermissions?()
-    }
-    
-    public func cameraViewDidPermissionsGranted(_ cameraView: CameraView) {
-        onPermissionsGranted?()
-    }
-    
-    public func cameraViewDidPermissionsDenied(_ cameraView: CameraView) {
-        onPermissionsDenied?()
-    }
-    
-}
+

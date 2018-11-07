@@ -11,6 +11,8 @@ import CameraView
 
 class ViewController: UIViewController {
 
+    var cameraViewController: CameraViewController?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -25,19 +27,20 @@ class ViewController: UIViewController {
 
     @IBAction func openCamera(_ sender: Any) {
         
-        let cameraViewController = CameraViewController()
-        cameraViewController.configuration = CameraViewConfiguration()
-        
-        cameraViewController.onPhotoPicked = { photoPath, photoWidth, photoHeight in
-            print("\(photoPath) \(photoWidth) \(photoHeight)")
-        }
-        
-        cameraViewController.onVideoPicked = { videoPath, videoDuration, photoPath, photoWidth, photoHeight in
-            print("\(videoPath) \(videoDuration) \(photoPath) \(photoWidth) \(photoHeight)")
-        }
+        let cameraViewController = CameraViewController(configuration: CameraViewConfiguration(), delegate: self)
         
         present(cameraViewController, animated: true, completion: nil)
+        
+        self.cameraViewController = cameraViewController
+        
     }
     
+}
+
+extension ViewController: CameraViewDelegate {
+    
+    public func cameraViewDidExit(_ cameraView: CameraView) {
+        cameraViewController?.dismiss(animated: true, completion: nil)
+    }
 }
 
