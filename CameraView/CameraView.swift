@@ -110,7 +110,7 @@ public class CameraView: UIView {
         
         cameraManager.onFinishCapturePhoto =  { (photo, error) in
             if let error = error {
-                print(error)
+                print(error.localizedDescription)
             }
             else if let photo = photo {
                 self.showPreviewView()
@@ -120,7 +120,7 @@ public class CameraView: UIView {
         
         cameraManager.onFinishRecordVideo = { (videoPath, error) in
             if let error = error {
-                print(error)
+                print(error.localizedDescription)
             }
             else if let videoPath = videoPath {
                 self.showPreviewView()
@@ -483,8 +483,7 @@ extension CameraView {
     
     func startRecordingTimer() {
         recordingTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: #selector(CameraView.onRecordingDurationUpdate), userInfo: nil, repeats: true)
-        print("start timer")
-        
+
         captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
         captureButton.ringWidth = configuration.captureButtonRingWidthRecording
         captureButton.trackValue = 0
@@ -498,7 +497,6 @@ extension CameraView {
         }
         timer.invalidate()
         self.recordingTimer = nil
-        print("stop timer")
         
         captureButton.centerRadius = configuration.captureButtonCenterRadiusNormal
         captureButton.ringWidth = configuration.captureButtonRingWidthNormal
@@ -563,10 +561,6 @@ extension CameraView: CircleViewDelegate {
                 cameraManager.stopRecordVideo()
             }
         }
-    }
-    
-    public func circleViewDidTouchDown(_ circleView: CircleView) {
-        print(circleView)
     }
     
     public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool, _ isLongPress: Bool) {

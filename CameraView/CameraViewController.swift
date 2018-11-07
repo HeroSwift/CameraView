@@ -20,9 +20,9 @@ public class CameraViewController: UIViewController {
         cameraView.delegate = self
         cameraView.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(cameraView)
-        
         cameraView.requestPermissions()
+        
+        view.addSubview(cameraView)
         
         if #available(iOS 11.0, *) {
             view.addConstraints([
@@ -64,4 +64,21 @@ extension CameraViewController: CameraViewDelegate {
         dismiss(animated: true, completion: nil)
         onVideoPicked?(videoPath, videoDuration, photoPath, photoWidth, photoHeight)
     }
+    
+    public func cameraViewDidRecordDurationLessThanMinDuration(_ cameraView: CameraView) {
+        print("cameraViewDidRecordDurationLessThanMinDuration")
+    }
+    
+    public func cameraViewWillCaptureWithoutPermissions(_ cameraView: CameraView) {
+        print("cameraViewWillCaptureWithoutPermissions")
+    }
+    
+    public func cameraViewDidPermissionsGranted(_ cameraView: CameraView) {
+        print("cameraViewDidPermissionsGranted")
+    }
+    
+    public func cameraViewDidPermissionsDenied(_ cameraView: CameraView) {
+        print("cameraViewDidPermissionsDenied")
+    }
+    
 }
