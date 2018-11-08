@@ -171,22 +171,26 @@ extension CameraManager {
             if !isDeviceReady {
                 prepare { error in
                     if let error = error {
-                        print(error)
+                        print(error.localizedDescription)
                     }
                     else {
-                        self.isDeviceReady = true
-                        self.onDeviceReady?()
+                        DispatchQueue.main.async {
+                            self.isDeviceReady = true
+                            self.onDeviceReady?()
+                        }
                     }
                 }
             }
             return true
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { granted in
-                if granted {
-                    self.onPermissionsGranted?()
-                }
-                else {
-                    self.onPermissionsDenied?()
+                DispatchQueue.main.async {
+                    if granted {
+                        self.onPermissionsGranted?()
+                    }
+                    else {
+                        self.onPermissionsDenied?()
+                    }
                 }
             }
             break
