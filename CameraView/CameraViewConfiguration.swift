@@ -4,7 +4,7 @@ import UIKit
 public class CameraViewConfiguration {
 
     // 引导文本颜色
-    public var guideLabelTextColor = UIColor(red: 160 / 255, green: 160 / 255, blue: 160 / 255, alpha: 1)
+    public var guideLabelTextColor = UIColor(red: 200 / 255, green: 200 / 255, blue: 200 / 255, alpha: 1)
     
     // 引导文本字体
     public var guideLabelTextFont = UIFont.systemFont(ofSize: 13)
@@ -13,7 +13,7 @@ public class CameraViewConfiguration {
     public var guideLabelMarginBottom: CGFloat = 30
     
     // 引导文本几秒后淡出
-    public var guideLabelFadeOutInterval: TimeInterval = 4
+    public var guideLabelFadeOutInterval: TimeInterval = 3
     
     // 引导文本
     public var guideLabelTitle = "轻触拍照，按住摄像"
@@ -134,10 +134,10 @@ public class CameraViewConfiguration {
     public var focusViewCrossLength: CGFloat = 6
     
     // 图片保存的目录
-    public var photoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+    public var photoDir = NSTemporaryDirectory()
     
     // 视频保存的目录
-    public var videoDir = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first!
+    public var videoDir = NSTemporaryDirectory()
     
     // 视频文件扩展名
     public var videoExtname = ".mp4"
