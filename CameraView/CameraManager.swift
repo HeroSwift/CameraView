@@ -848,7 +848,13 @@ extension CameraManager {
         let format = DateFormatter()
         format.dateFormat = "yyyy_MM_dd_HH_mm_ss"
         
-        return "\(dirname)/\(format.string(from: Date()))\(extname)"
+        let filename = "\(format.string(from: Date()))\(extname)"
+        
+        if dirname.hasSuffix("/") {
+            return dirname + filename
+        }
+        
+        return "\(dirname)/\(filename)"
         
     }
     
