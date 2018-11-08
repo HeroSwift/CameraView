@@ -27,7 +27,9 @@ class ViewController: UIViewController {
 
     @IBAction func openCamera(_ sender: Any) {
         
-        let cameraViewController = CameraViewController(configuration: CameraViewConfiguration(), delegate: self)
+        let cameraViewController = CameraViewController()
+        cameraViewController.configuration = CameraViewConfiguration()
+        cameraViewController.delegate = self
         
         present(cameraViewController, animated: true, completion: nil)
         

@@ -3,16 +3,8 @@ import UIKit
 
 public class CameraViewController: UIViewController {
     
-    private var cameraView: CameraView!
-    
-    public convenience init(configuration: CameraViewConfiguration, delegate: CameraViewDelegate) {
-        
-        self.init()
-        
-        self.cameraView = CameraView(configuration: configuration)
-        cameraView.delegate = delegate
-
-    }
+    public var configuration: CameraViewConfiguration!
+    public var delegate: CameraViewDelegate!
     
     public override var prefersStatusBarHidden: Bool {
         return true
@@ -21,6 +13,9 @@ public class CameraViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
+        let cameraView = CameraView(configuration: configuration)
+        
+        cameraView.delegate = delegate
         cameraView.translatesAutoresizingMaskIntoConstraints = false
         
         cameraView.requestPermissions()
