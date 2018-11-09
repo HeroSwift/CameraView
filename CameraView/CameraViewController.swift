@@ -6,39 +6,37 @@ public class CameraViewController: UIViewController {
     public var configuration: CameraViewConfiguration!
     public var delegate: CameraViewDelegate!
     
+    private var cameraView: CameraView!
+    
     public override var prefersStatusBarHidden: Bool {
         return true
     }
     
     public override func viewDidLoad() {
+        
         super.viewDidLoad()
         
-        let cameraView = CameraView(configuration: configuration)
-        
+        cameraView = CameraView(configuration: configuration)
         cameraView.delegate = delegate
-        cameraView.translatesAutoresizingMaskIntoConstraints = false
-        
         cameraView.requestPermissions()
         
+        view.backgroundColor = .black
         view.addSubview(cameraView)
         
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        updateCameraSize()
+    }
+    
+    private func updateCameraSize() {
         if #available(iOS 11.0, *) {
-            view.addConstraints([
-                NSLayoutConstraint(item: cameraView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: view.safeAreaInsets.top),
-                NSLayoutConstraint(item: cameraView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: -view.safeAreaInsets.bottom),
-                NSLayoutConstraint(item: cameraView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: view.safeAreaInsets.left),
-                NSLayoutConstraint(item: cameraView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: -view.safeAreaInsets.right),
-            ])
+            let safeAreaInsets = view.safeAreaInsets
+            cameraView.frame = CGRect(x: safeAreaInsets.left, y: safeAreaInsets.top, width: view.frame.width - safeAreaInsets.left - safeAreaInsets.right, height: view.frame.height - safeAreaInsets.top - safeAreaInsets.bottom)
         }
         else {
-            view.addConstraints([
-                NSLayoutConstraint(item: cameraView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: cameraView, attribute: .bottom, relatedBy: .equal, toItem: view, attribute: .bottom, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: cameraView, attribute: .left, relatedBy: .equal, toItem: view, attribute: .left, multiplier: 1, constant: 0),
-                NSLayoutConstraint(item: cameraView, attribute: .right, relatedBy: .equal, toItem: view, attribute: .right, multiplier: 1, constant: 0),
-            ])
+            cameraView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         }
-        
     }
     
     public override func didReceiveMemoryWarning() {
