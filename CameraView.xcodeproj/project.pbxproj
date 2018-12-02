@@ -15,7 +15,6 @@
 		9D23E9D22191978B0033BCDD /* SimpleButton.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		9D23E9D42191986A0033BCDD /* CameraView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D659B402148B9D0007899CC /* CameraView.framework */; };
 		9D23E9D52191986A0033BCDD /* CameraView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D659B402148B9D0007899CC /* CameraView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9D43504C2185DD5A00084889 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D43504B2185DD5A00084889 /* Assets.xcassets */; };
 		9D43504E2185DD9F00084889 /* CameraViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */; };
 		9D4350502185E5CE00084889 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43504F2185E5CE00084889 /* CameraView.swift */; };
 		9D4350522185E62500084889 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350512185E62500084889 /* CameraManager.swift */; };
@@ -60,7 +59,6 @@
 /* Begin PBXFileReference section */
 		9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SimpleButton.framework; path = Carthage/Build/iOS/SimpleButton.framework; sourceTree = "<group>"; };
 		9D23E9CC21918ECF0033BCDD /* CircleView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CircleView.framework; path = Carthage/Build/iOS/CircleView.framework; sourceTree = "<group>"; };
-		9D43504B2185DD5A00084889 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewConfiguration.swift; sourceTree = "<group>"; };
 		9D43504F2185E5CE00084889 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		9D4350512185E62500084889 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
@@ -135,7 +133,6 @@
 			isa = PBXGroup;
 			children = (
 				9D659B442148B9D0007899CC /* Info.plist */,
-				9D43504B2185DD5A00084889 /* Assets.xcassets */,
 				9D43504F2185E5CE00084889 /* CameraView.swift */,
 				9D4350512185E62500084889 /* CameraManager.swift */,
 				9D4350592185E68E00084889 /* CaptureView.swift */,
@@ -255,7 +252,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D43504C2185DD5A00084889 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

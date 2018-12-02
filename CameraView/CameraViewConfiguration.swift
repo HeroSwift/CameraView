@@ -64,7 +64,7 @@ public class CameraViewConfiguration {
     public var flipButtonHeight: CGFloat = 44
     
     // 切换摄像头按钮的图片
-    public var flipButtonImage = UIImage(named: "camera-flip", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var flipButtonImage = UIImage(named: "camera_view_camera_flip")
     
     // 闪光灯按钮与切换摄像头按钮的距离
     public var flashButtonMarginRight: CGFloat = 14
@@ -76,13 +76,13 @@ public class CameraViewConfiguration {
     public var flashButtonHeight: CGFloat = 44
     
     // 闪光灯开启的图片
-    public var flashOnImage = UIImage(named: "flash-on", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var flashOnImage = UIImage(named: "camera_view_flash_on")
     
     // 闪光灯关闭的图片
-    public var flashOffImage = UIImage(named: "flash-off", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var flashOffImage = UIImage(named: "camera_view_flash_off")
     
     // 闪光灯自动的图片
-    public var flashAutoImage = UIImage(named: "flash-auto", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var flashAutoImage = UIImage(named: "camera_view_flash_auto")
     
     // 退出按钮与录制按钮的距离
     public var exitButtonMarginRight: CGFloat = 50
@@ -94,7 +94,7 @@ public class CameraViewConfiguration {
     public var exitButtonHeight: CGFloat = 44
     
     // 退出按钮的图片
-    public var exitButtonImage = UIImage(named: "exit", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var exitButtonImage = UIImage(named: "camera_view_exit")
     
     // 确定按钮的半径
     public var okButtonCenterRadius: CGFloat = 38
@@ -103,7 +103,7 @@ public class CameraViewConfiguration {
     public var okButtonCenterColor = UIColor.white
     
     // 确定按钮的图片
-    public var okButtonImage = UIImage(named: "ok", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var okButtonImage = UIImage(named: "camera_view_ok")
     
     public var okButtonRingWidth: CGFloat = 0
     
@@ -114,7 +114,7 @@ public class CameraViewConfiguration {
     public var cancelButtonCenterColor = UIColor(red: 255 / 255, green: 255 / 255, blue: 255 / 255, alpha: 0.9)
     
     // 取消按钮的图片
-    public var cancelButtonImage = UIImage(named: "cancel", in: Bundle(for: CameraViewConfiguration.self), compatibleWith: nil)
+    public var cancelButtonImage = UIImage(named: "camera_view_cancel")
     
     public var cancelButtonRingWidth: CGFloat = 0
     
@@ -143,10 +143,10 @@ public class CameraViewConfiguration {
     public var videoExtname = ".mp4"
     
     // 视频最短录制时长
-    public var videoMinDuration: TimeInterval = 1
+    public var videoMinDuration: Int = 1000
     
     // 视频最大录制时长
-    public var videoMaxDuration: TimeInterval = 10
+    public var videoMaxDuration: Int = 10000
     
     public init() { }
     

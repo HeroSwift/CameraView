@@ -83,7 +83,17 @@ class CameraManager : NSObject {
     var videoPath = ""
     
     // 录制完成后视频的时长
-    var videoDuration: Double = 0
+    var videoDuration: Int = 0
+    
+    // 录制视频当前的时长
+    var videoCurrentTime: Int {
+        get {
+            guard let output = videoOutput else {
+                return 0
+            }
+            return Int(output.recordedDuration.seconds) * 1000
+        }
+    }
     
     //
     // MARK: - 拍照的配置
@@ -571,7 +581,7 @@ extension CameraManager: AVCaptureFileOutputRecordingDelegate {
         var success = false
         
         if error == nil {
-            videoDuration = output.recordedDuration.seconds
+            videoDuration = videoCurrentTime
             if videoDuration >= configuration.videoMinDuration {
                 success = true
                 onFinishRecordVideo?(videoPath, nil)

@@ -506,12 +506,10 @@ extension CameraView {
     }
     
     @objc private func onRecordingDurationUpdate() {
-        guard let output = cameraManager.videoOutput else {
-            return
-        }
         
-        let currentTime = output.recordedDuration.seconds
-        captureButton.trackValue = currentTime / configuration.videoMaxDuration
+        let currentTime = cameraManager.videoCurrentTime
+
+        captureButton.trackValue = Double(currentTime) / Double(configuration.videoMaxDuration)
         captureButton.setNeedsDisplay()
         
         if currentTime >= configuration.videoMaxDuration {
