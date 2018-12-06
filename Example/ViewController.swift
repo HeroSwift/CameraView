@@ -44,5 +44,9 @@ extension ViewController: CameraViewDelegate {
     public func cameraViewDidExit(_ cameraView: CameraView) {
         cameraViewController?.dismiss(animated: true, completion: nil)
     }
+    
+    public func cameraViewDidPickVideo(_ cameraView: CameraView, videoPath: String, videoDuration: Int, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) {
+        print("\(videoPath) \(videoDuration) \(photoPath) \(photoWidth) \(photoHeight)")
+    }
 }
 

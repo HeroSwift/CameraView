@@ -110,6 +110,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		9D2F290121B91864008E8479 /* view */ = {
+			isa = PBXGroup;
+			children = (
+				9D4350592185E68E00084889 /* CaptureView.swift */,
+				9D43505B2185E6A600084889 /* PreviewView.swift */,
+				9D4350AB2186B85D00084889 /* FocusView.swift */,
+			);
+			path = view;
+			sourceTree = "<group>";
+		};
 		9D659B362148B9D0007899CC = {
 			isa = PBXGroup;
 			children = (
@@ -132,12 +142,10 @@
 		9D659B422148B9D0007899CC /* CameraView */ = {
 			isa = PBXGroup;
 			children = (
+				9D2F290121B91864008E8479 /* view */,
 				9D659B442148B9D0007899CC /* Info.plist */,
 				9D43504F2185E5CE00084889 /* CameraView.swift */,
 				9D4350512185E62500084889 /* CameraManager.swift */,
-				9D4350592185E68E00084889 /* CaptureView.swift */,
-				9D43505B2185E6A600084889 /* PreviewView.swift */,
-				9D4350AB2186B85D00084889 /* FocusView.swift */,
 				9D43505D2185F28E00084889 /* CameraViewController.swift */,
 				9D43505F2185F4B100084889 /* CameraViewDelegate.swift */,
 				9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */,

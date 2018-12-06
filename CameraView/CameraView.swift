@@ -482,7 +482,8 @@ extension CameraView {
 extension CameraView {
     
     func startRecordingTimer() {
-        recordingTimer = Timer.scheduledTimer(timeInterval: 1 / 60, target: self, selector: #selector(CameraView.onRecordingDurationUpdate), userInfo: nil, repeats: true)
+        // 一毫秒执行一次
+        recordingTimer = Timer.scheduledTimer(timeInterval: 1 / 1000, target: self, selector: #selector(CameraView.onRecordingDurationUpdate), userInfo: nil, repeats: true)
 
         captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
         captureButton.ringWidth = configuration.captureButtonRingWidthRecording
@@ -509,6 +510,7 @@ extension CameraView {
         
         let currentTime = cameraManager.videoCurrentTime
 
+        print(currentTime)
         captureButton.trackValue = Double(currentTime) / Double(configuration.videoMaxDuration)
         captureButton.setNeedsDisplay()
         
