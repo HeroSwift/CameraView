@@ -39,7 +39,7 @@ public class CameraView: UIView {
     
     private var configuration: CameraViewConfiguration!
     
-    private var cameraManager: CameraManager!
+    private var cameraManager = CameraManager()
     
     private var cameraIsReady = false
     
@@ -50,8 +50,8 @@ public class CameraView: UIView {
     public convenience init(configuration: CameraViewConfiguration) {
         self.init()
         self.configuration = configuration
-        self.cameraManager = CameraManager(configuration: configuration)
         self.captureView = CaptureView(configuration: configuration)
+        cameraManager.configuration = configuration
         setup()
     }
     
@@ -510,7 +510,6 @@ extension CameraView {
         
         let currentTime = cameraManager.videoCurrentTime
 
-        print(currentTime)
         captureButton.trackValue = Double(currentTime) / Double(configuration.videoMaxDuration)
         captureButton.setNeedsDisplay()
         
