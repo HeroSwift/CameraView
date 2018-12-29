@@ -1,9 +1,6 @@
 
 import UIKit
 
-import SimpleButton
-import CircleView
-
 public class CameraView: UIView {
     
     var delegate: CameraViewDelegate!

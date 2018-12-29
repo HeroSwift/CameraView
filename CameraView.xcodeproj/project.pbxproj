@@ -7,14 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D23E9CD21918ECF0033BCDD /* SimpleButton.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */; };
-		9D23E9CE21918ECF0033BCDD /* CircleView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CC21918ECF0033BCDD /* CircleView.framework */; };
-		9D23E9CF2191978B0033BCDD /* CircleView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CC21918ECF0033BCDD /* CircleView.framework */; };
-		9D23E9D02191978B0033BCDD /* CircleView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CC21918ECF0033BCDD /* CircleView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9D23E9D12191978B0033BCDD /* SimpleButton.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */; };
-		9D23E9D22191978B0033BCDD /* SimpleButton.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9D23E9D42191986A0033BCDD /* CameraView.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D659B402148B9D0007899CC /* CameraView.framework */; };
-		9D23E9D52191986A0033BCDD /* CameraView.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9D659B402148B9D0007899CC /* CameraView.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9D2407A521D762A6006814D0 /* SimpleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2407A321D762A6006814D0 /* SimpleButton.swift */; };
+		9D2407AB21D762AD006814D0 /* CircleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2407A821D762AD006814D0 /* CircleView.swift */; };
+		9D2407AD21D762AD006814D0 /* CircleViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D2407AA21D762AD006814D0 /* CircleViewDelegate.swift */; };
 		9D43504E2185DD9F00084889 /* CameraViewConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */; };
 		9D4350502185E5CE00084889 /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D43504F2185E5CE00084889 /* CameraView.swift */; };
 		9D4350522185E62500084889 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D4350512185E62500084889 /* CameraManager.swift */; };
@@ -31,7 +26,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		9D659B612148BA75007899CC /* PBXContainerItemProxy */ = {
+		9D2407AE21D763B7006814D0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9D659B372148B9D0007899CC /* Project object */;
 			proxyType = 1;
@@ -40,25 +35,12 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		9D23E9D32191978B0033BCDD /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				9D23E9D52191986A0033BCDD /* CameraView.framework in Embed Frameworks */,
-				9D23E9D22191978B0033BCDD /* SimpleButton.framework in Embed Frameworks */,
-				9D23E9D02191978B0033BCDD /* CircleView.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SimpleButton.framework; path = Carthage/Build/iOS/SimpleButton.framework; sourceTree = "<group>"; };
 		9D23E9CC21918ECF0033BCDD /* CircleView.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CircleView.framework; path = Carthage/Build/iOS/CircleView.framework; sourceTree = "<group>"; };
+		9D2407A321D762A6006814D0 /* SimpleButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleButton.swift; sourceTree = "<group>"; };
+		9D2407A821D762AD006814D0 /* CircleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleView.swift; sourceTree = "<group>"; };
+		9D2407AA21D762AD006814D0 /* CircleViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircleViewDelegate.swift; sourceTree = "<group>"; };
 		9D43504D2185DD9F00084889 /* CameraViewConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewConfiguration.swift; sourceTree = "<group>"; };
 		9D43504F2185E5CE00084889 /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		9D4350512185E62500084889 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
@@ -83,8 +65,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D23E9CD21918ECF0033BCDD /* SimpleButton.framework in Frameworks */,
-				9D23E9CE21918ECF0033BCDD /* CircleView.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -92,9 +72,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D23E9D42191986A0033BCDD /* CameraView.framework in Frameworks */,
-				9D23E9D12191978B0033BCDD /* SimpleButton.framework in Frameworks */,
-				9D23E9CF2191978B0033BCDD /* CircleView.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +85,23 @@
 				9D23E9CB21918ECE0033BCDD /* SimpleButton.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9D2407A221D762A6006814D0 /* SimpleButton */ = {
+			isa = PBXGroup;
+			children = (
+				9D2407A321D762A6006814D0 /* SimpleButton.swift */,
+			);
+			path = SimpleButton;
+			sourceTree = "<group>";
+		};
+		9D2407A721D762AD006814D0 /* CircleView */ = {
+			isa = PBXGroup;
+			children = (
+				9D2407A821D762AD006814D0 /* CircleView.swift */,
+				9D2407AA21D762AD006814D0 /* CircleViewDelegate.swift */,
+			);
+			path = CircleView;
 			sourceTree = "<group>";
 		};
 		9D2F290121B91864008E8479 /* view */ = {
@@ -142,6 +136,8 @@
 		9D659B422148B9D0007899CC /* CameraView */ = {
 			isa = PBXGroup;
 			children = (
+				9D2407A721D762AD006814D0 /* CircleView */,
+				9D2407A221D762A6006814D0 /* SimpleButton */,
 				9D2F290121B91864008E8479 /* view */,
 				9D659B442148B9D0007899CC /* Info.plist */,
 				9D43504F2185E5CE00084889 /* CameraView.swift */,
@@ -187,7 +183,6 @@
 				9D659B3C2148B9D0007899CC /* Frameworks */,
 				9D659B3D2148B9D0007899CC /* Headers */,
 				9D659B3E2148B9D0007899CC /* Resources */,
-				9D23E9C921918E880033BCDD /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -205,12 +200,11 @@
 				9D659B4B2148B9E7007899CC /* Sources */,
 				9D659B4C2148B9E7007899CC /* Frameworks */,
 				9D659B4D2148B9E7007899CC /* Resources */,
-				9D23E9D32191978B0033BCDD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				9D659B622148BA75007899CC /* PBXTargetDependency */,
+				9D2407AF21D763B7006814D0 /* PBXTargetDependency */,
 			);
 			name = Example;
 			productName = Example;
@@ -275,24 +269,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		9D23E9C921918E880033BCDD /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/SimpleButton.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/CircleView.framework",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		9D659B3B2148B9D0007899CC /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -304,8 +280,11 @@
 				9D4350522185E62500084889 /* CameraManager.swift in Sources */,
 				9D4350502185E5CE00084889 /* CameraView.swift in Sources */,
 				9D4350602185F4B100084889 /* CameraViewDelegate.swift in Sources */,
+				9D2407AB21D762AD006814D0 /* CircleView.swift in Sources */,
 				9D4350AC2186B85D00084889 /* FocusView.swift in Sources */,
 				9D43505E2185F28E00084889 /* CameraViewController.swift in Sources */,
+				9D2407AD21D762AD006814D0 /* CircleViewDelegate.swift in Sources */,
+				9D2407A521D762A6006814D0 /* SimpleButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,10 +300,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		9D659B622148BA75007899CC /* PBXTargetDependency */ = {
+		9D2407AF21D763B7006814D0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 9D659B3F2148B9D0007899CC /* CameraView */;
-			targetProxy = 9D659B612148BA75007899CC /* PBXContainerItemProxy */;
+			targetProxy = 9D2407AE21D763B7006814D0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -499,7 +478,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -532,7 +511,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.finstao.CameraView;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -540,7 +519,6 @@
 		9D659B5F2148B9E9007899CC /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = N276SVAZ33;
@@ -566,7 +544,6 @@
 		9D659B602148B9E9007899CC /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Manual;
 				DEVELOPMENT_TEAM = N276SVAZ33;
