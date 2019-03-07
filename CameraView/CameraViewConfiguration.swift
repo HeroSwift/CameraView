@@ -98,15 +98,13 @@ public class CameraViewConfiguration {
     public var exitButtonImage = UIImage(named: "camera_view_exit")
     
     // 确定按钮的半径
-    public var okButtonCenterRadius: CGFloat = 38
+    public var submitButtonCenterRadius: CGFloat = 38
     
     // 确定按钮的颜色
-    public var okButtonCenterColor = UIColor.white
+    public var submitButtonCenterColor = UIColor.white
     
     // 确定按钮的图片
-    public var okButtonImage = UIImage(named: "camera_view_ok")
-    
-    public var okButtonRingWidth: CGFloat = 0
+    public var submitButtonImage = UIImage(named: "camera_view_ok")
     
     // 取消按钮的半径
     public var cancelButtonCenterRadius: CGFloat = 38
@@ -117,14 +115,12 @@ public class CameraViewConfiguration {
     // 取消按钮的图片
     public var cancelButtonImage = UIImage(named: "camera_view_cancel")
     
-    public var cancelButtonRingWidth: CGFloat = 0
-    
     
     // 聚焦视图的宽度
-    public var focusViewWidth: CGFloat = 40
+    public var focusViewWidth: CGFloat = 60
     
     // 聚焦视图的高度
-    public var focusViewHeight: CGFloat = 40
+    public var focusViewHeight: CGFloat = 60
     
     // 聚焦视图的颜色
     public var focusViewColor = UIColor.green

@@ -27,7 +27,7 @@ public class CameraView: UIView {
     var chooseView = UIView()
     var chooseViewWidthConstraint: NSLayoutConstraint!
     
-    var okButton = CircleView()
+    var submitButton = CircleView()
     var cancelButton = CircleView()
     
     //
@@ -113,7 +113,7 @@ public class CameraView: UIView {
             }
             else if let videoPath = videoPath {
                 self.showPreviewView()
-                self.previewView.startVideoPlaying(videoPath: videoPath)
+                self.previewView.video = videoPath
             }
             self.stopRecordingTimer()
         }
@@ -138,7 +138,7 @@ public class CameraView: UIView {
                 self.captureButton.alpha = 0
                 self.exitButton.alpha = 0
                 self.cancelButton.alpha = 1
-                self.okButton.alpha = 1
+                self.submitButton.alpha = 1
             },
             completion: { _ in
                 self.flashButton.isHidden = true
@@ -170,7 +170,7 @@ public class CameraView: UIView {
                 self.captureButton.alpha = 1
                 self.exitButton.alpha = 1
                 self.cancelButton.alpha = 0
-                self.okButton.alpha = 0
+                self.submitButton.alpha = 0
             },
             completion: { _ in
                 self.flashButton.isHidden = false
@@ -187,7 +187,7 @@ public class CameraView: UIView {
             previewView.image = nil
         }
         else {
-            previewView.stopVideoPlaying()
+            previewView.video = ""
         }
         
         cameraIsCapturing = true
@@ -412,11 +412,11 @@ extension CameraView {
         
         chooseViewWidthConstraint = NSLayoutConstraint(item: chooseView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .width, multiplier: 1, constant: 0)
         
-        addOkButton()
+        addSubmitButton()
         addCancelButton()
         
         addConstraints([
-            NSLayoutConstraint(item: chooseView, attribute: .height, relatedBy: .equal, toItem: okButton, attribute: .height, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: chooseView, attribute: .height, relatedBy: .equal, toItem: submitButton, attribute: .height, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: chooseView, attribute: .centerX, relatedBy: .equal, toItem: self, attribute: .centerX, multiplier: 1, constant: 0),
             NSLayoutConstraint(item: chooseView, attribute: .centerY, relatedBy: .equal, toItem: captureButton, attribute: .centerY, multiplier: 1, constant: 0),
             chooseViewWidthConstraint
@@ -424,21 +424,21 @@ extension CameraView {
         
     }
     
-    private func addOkButton() {
+    private func addSubmitButton() {
         
-        okButton.alpha = 0
-        okButton.delegate = self
-        okButton.centerRadius = configuration.okButtonCenterRadius
-        okButton.centerColor = configuration.okButtonCenterColor
-        okButton.ringWidth = configuration.okButtonRingWidth
-        okButton.centerImage = configuration.okButtonImage
+        submitButton.alpha = 0
+        submitButton.delegate = self
+        submitButton.centerRadius = configuration.submitButtonCenterRadius
+        submitButton.centerColor = configuration.submitButtonCenterColor
+        submitButton.ringWidth = 0
+        submitButton.centerImage = configuration.submitButtonImage
         
-        okButton.translatesAutoresizingMaskIntoConstraints = false
-        chooseView.addSubview(okButton)
+        submitButton.translatesAutoresizingMaskIntoConstraints = false
+        chooseView.addSubview(submitButton)
         
         chooseView.addConstraints([
-            NSLayoutConstraint(item: okButton, attribute: .right, relatedBy: .equal, toItem: chooseView, attribute: .right, multiplier: 1, constant: 0),
-            NSLayoutConstraint(item: okButton, attribute: .centerY, relatedBy: .equal, toItem: chooseView, attribute: .centerY, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: submitButton, attribute: .right, relatedBy: .equal, toItem: chooseView, attribute: .right, multiplier: 1, constant: 0),
+            NSLayoutConstraint(item: submitButton, attribute: .centerY, relatedBy: .equal, toItem: chooseView, attribute: .centerY, multiplier: 1, constant: 0),
         ])
         
     }
@@ -449,7 +449,7 @@ extension CameraView {
         cancelButton.delegate = self
         cancelButton.centerRadius = configuration.cancelButtonCenterRadius
         cancelButton.centerColor = configuration.cancelButtonCenterColor
-        cancelButton.ringWidth = configuration.cancelButtonRingWidth
+        cancelButton.ringWidth = 0
         cancelButton.centerImage = configuration.cancelButtonImage
         
         cancelButton.translatesAutoresizingMaskIntoConstraints = false
@@ -549,17 +549,45 @@ extension CameraView: CircleViewDelegate {
         }
     }
     
+    public func circleViewDidTouchDown(_ circleView: CircleView) {
+        if circleView == captureButton {
+            circleView.centerColor = configuration.captureButtonCenterColorPressed
+            circleView.setNeedsDisplay()
+        }
+    }
+    
+    public func circleViewDidTouchEnter(_ circleView: CircleView) {
+        if circleView == captureButton {
+            circleView.centerColor = configuration.captureButtonCenterColorPressed
+            circleView.setNeedsDisplay()
+        }
+    }
+    
+    public func circleViewDidTouchLeave(_ circleView: CircleView) {
+        if circleView == captureButton {
+            circleView.centerColor = configuration.captureButtonCenterColorNormal
+            circleView.setNeedsDisplay()
+        }
+    }
+    
     public func circleViewDidTouchUp(_ circleView: CircleView, _ inside: Bool, _ isLongPress: Bool) {
+        
+        if inside && circleView == captureButton {
+            circleView.centerColor = configuration.captureButtonCenterColorNormal
+            circleView.setNeedsDisplay()
+        }
+        
         guard inside, !isLongPress else {
             return
         }
+        
         if circleView == captureButton {
             cameraManager.capturePhoto()
         }
         else if circleView == cancelButton {
             hidePreviewView()
         }
-        else if circleView == okButton {
+        else if circleView == submitButton {
             hidePreviewView()
             if let photo = cameraManager.photo {
                 // 保存图片
