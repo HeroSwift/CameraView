@@ -14,7 +14,7 @@ public class CameraViewConfiguration {
     public var guideLabelMarginBottom: CGFloat = 30
     
     // 引导文本几秒后淡出
-    public var guideLabelFadeOutInterval: TimeInterval = 3
+    public var guideLabelFadeOutDelay: TimeInterval = 3
     
     // 引导文本
     public var guideLabelTitle = "轻触拍照，按住摄像"

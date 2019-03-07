@@ -16,7 +16,10 @@ public class CameraView: UIView {
     
     var exitButton = SimpleButton()
     var captureButton = CircleView()
-    var guideLabel = UILabel()
+    
+    lazy var guideLabel: UILabel = {
+        return UILabel()
+    }()
     
     //
     // MARK: - 选择界面
@@ -365,6 +368,10 @@ extension CameraView {
     
     private func addGuideLabel() {
         
+        if configuration.guideLabelTitle.isEmpty {
+            return
+        }
+        
         guideLabel.text = configuration.guideLabelTitle
         guideLabel.textColor = configuration.guideLabelTextColor
         guideLabel.font = configuration.guideLabelTextFont
@@ -380,8 +387,14 @@ extension CameraView {
         ])
         
         // N 秒后淡出
-        if configuration.guideLabelFadeOutInterval > 0 {
-            Timer.scheduledTimer(timeInterval: configuration.guideLabelFadeOutInterval, target: self, selector: #selector(CameraView.onGuideLabelFadeOut), userInfo: nil, repeats: false)
+        if configuration.guideLabelFadeOutDelay > 0 {
+            Timer.scheduledTimer(
+                timeInterval: configuration.guideLabelFadeOutDelay,
+                target: self,
+                selector: #selector(CameraView.onGuideLabelFadeOut),
+                userInfo: nil,
+                repeats: false
+            )
         }
         
     }
@@ -512,7 +525,7 @@ extension CameraView {
         
         // 引导文字淡出消失
         UIView.animate(
-            withDuration: 0.8,
+            withDuration: 1,
             delay: 0,
             options: .curveEaseOut,
             animations: {
