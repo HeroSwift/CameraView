@@ -41,12 +41,12 @@ public class CameraView: UIView {
     
     private var cameraManager = CameraManager()
     
+    private var progressAnimation: CABasicAnimation!
+    
     private var cameraIsReady = false
     
     private var cameraIsCapturing = false
-    
-    private var recordingTimer: Timer?
-    
+
     public convenience init(configuration: CameraViewConfiguration) {
         self.init()
         self.configuration = configuration
@@ -118,7 +118,11 @@ public class CameraView: UIView {
                 self.showPreviewView()
                 self.previewView.video = videoPath
             }
-            self.stopRecordingTimer()
+            
+            self.captureButton.layer.removeAnimation(forKey: #keyPath(CircleLayer.trackValue))
+            self.captureButton.centerRadius = self.configuration.captureButtonCenterRadiusNormal
+            self.captureButton.ringWidth = self.configuration.captureButtonRingWidthNormal
+            self.captureButton.trackValue = 0
         }
         
         addCaptureView()
@@ -128,7 +132,8 @@ public class CameraView: UIView {
     
     private func showPreviewView() {
         
-        chooseViewWidthConstraint.constant = 230
+        // 经测试，3.2 个圆是个不错的宽度
+        chooseViewWidthConstraint.constant = 3.2 * 2 * configuration.captureButtonCenterRadiusNormal
         
         UIView.animate(
             withDuration: 0.2,
@@ -478,44 +483,6 @@ extension CameraView {
 
 extension CameraView {
     
-    func startRecordingTimer() {
-        // 一毫秒执行一次
-        recordingTimer = Timer.scheduledTimer(timeInterval: 1 / 1000, target: self, selector: #selector(CameraView.onRecordingDurationUpdate), userInfo: nil, repeats: true)
-
-        captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
-        captureButton.ringWidth = configuration.captureButtonRingWidthRecording
-        captureButton.trackValue = 0
-        captureButton.setNeedsLayout()
-        captureButton.setNeedsDisplay()
-    }
-    
-    private func stopRecordingTimer() {
-        guard let timer = recordingTimer else {
-            return
-        }
-        timer.invalidate()
-        self.recordingTimer = nil
-        
-        captureButton.centerRadius = configuration.captureButtonCenterRadiusNormal
-        captureButton.ringWidth = configuration.captureButtonRingWidthNormal
-        captureButton.trackValue = 0
-        captureButton.setNeedsLayout()
-        captureButton.setNeedsDisplay()
-    }
-    
-    @objc private func onRecordingDurationUpdate() {
-        
-        let currentTime = cameraManager.videoCurrentTime
-
-        captureButton.trackValue = Double(currentTime) / Double(configuration.videoMaxDuration)
-        captureButton.setNeedsDisplay()
-        
-        if currentTime >= configuration.videoMaxDuration {
-            cameraManager.stopRecordVideo()
-        }
-        
-    }
-    
     @objc private func onGuideLabelFadeOut() {
         
         // 引导文字淡出消失
@@ -530,8 +497,7 @@ extension CameraView {
                  self.guideLabel.isHidden = true
             }
         )
-        
-        
+
     }
     
 }
@@ -547,7 +513,18 @@ extension CameraView: CircleViewDelegate {
             // 长按触发录制视频
             cameraManager.startRecordVideo()
             if cameraManager.isVideoRecording {
-                startRecordingTimer()
+                
+                captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
+                captureButton.ringWidth = configuration.captureButtonRingWidthRecording
+                captureButton.trackValue = 0
+                
+                progressAnimation = CABasicAnimation(keyPath: #keyPath(CircleLayer.trackValue))
+                progressAnimation.fromValue = 0.0
+                progressAnimation.toValue = 1.0
+                progressAnimation.delegate = self
+                progressAnimation.duration = Double(configuration.videoMaxDuration) / 1000
+                captureButton.layer.add(progressAnimation, forKey: #keyPath(CircleLayer.trackValue))
+                
             }
         }
     }
@@ -622,6 +599,17 @@ extension CameraView: CircleViewDelegate {
                     )
                 }
             }
+        }
+    }
+    
+}
+
+extension CameraView: CAAnimationDelegate {
+    
+    // 这里只能这样写，否则动画结束时不会调这里
+    @objc func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
+        if cameraManager.isVideoRecording {
+            cameraManager.stopRecordVideo()
         }
     }
     
