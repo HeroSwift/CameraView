@@ -136,12 +136,12 @@ public class CameraView: UIView {
             options: .curveEaseOut,
             animations: {
                 self.chooseView.layoutIfNeeded()
+                self.chooseView.alpha = 1
+                
                 self.flashButton.alpha = 0
                 self.flipButton.alpha = 0
                 self.captureButton.alpha = 0
                 self.exitButton.alpha = 0
-                self.cancelButton.alpha = 1
-                self.submitButton.alpha = 1
             },
             completion: { _ in
                 self.flashButton.isHidden = true
@@ -168,30 +168,26 @@ public class CameraView: UIView {
             options: .curveEaseOut,
             animations: {
                 self.chooseView.layoutIfNeeded()
+                self.chooseView.alpha = 0
+                
                 self.flashButton.alpha = 1
                 self.flipButton.alpha = 1
                 self.captureButton.alpha = 1
                 self.exitButton.alpha = 1
-                self.cancelButton.alpha = 0
-                self.submitButton.alpha = 0
             },
-            completion: { _ in
-                self.flashButton.isHidden = false
-                self.flipButton.isHidden = false
-                self.captureButton.isHidden = false
-                self.exitButton.isHidden = false
-            }
+            completion: nil
         )
         
-        previewView.isHidden = true
         captureView.isHidden = false
+        flashButton.isHidden = false
+        flipButton.isHidden = false
+        captureButton.isHidden = false
+        exitButton.isHidden = false
         
-        if previewView.image != nil {
-            previewView.image = nil
-        }
-        else {
-            previewView.video = ""
-        }
+        previewView.isHidden = true
+        
+        previewView.image = nil
+        previewView.video = ""
         
         cameraIsCapturing = true
         
@@ -419,6 +415,7 @@ extension CameraView {
     
     private func addChooseView() {
         
+        chooseView.alpha = 0
         chooseView.translatesAutoresizingMaskIntoConstraints = false
         chooseView.clipsToBounds = true
         addSubview(chooseView)
@@ -439,7 +436,6 @@ extension CameraView {
     
     private func addSubmitButton() {
         
-        submitButton.alpha = 0
         submitButton.delegate = self
         submitButton.centerRadius = configuration.submitButtonCenterRadius
         submitButton.centerColor = configuration.submitButtonCenterColor
@@ -457,8 +453,7 @@ extension CameraView {
     }
     
     private func addCancelButton() {
-        
-        cancelButton.alpha = 0
+       
         cancelButton.delegate = self
         cancelButton.centerRadius = configuration.cancelButtonCenterRadius
         cancelButton.centerColor = configuration.cancelButtonCenterColor
@@ -535,6 +530,7 @@ extension CameraView {
                  self.guideLabel.isHidden = true
             }
         )
+        
         
     }
     

@@ -104,7 +104,7 @@ public class CameraViewConfiguration {
     public var submitButtonCenterColor = UIColor.white
     
     // 确定按钮的图片
-    public var submitButtonImage = UIImage(named: "camera_view_ok")
+    public var submitButtonImage = UIImage(named: "camera_view_submit")
     
     // 取消按钮的半径
     public var cancelButtonCenterRadius: CGFloat = 38
