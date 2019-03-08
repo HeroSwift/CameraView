@@ -136,6 +136,9 @@ public class CameraViewConfiguration {
     // 视频保存的目录
     public var videoDir = NSTemporaryDirectory()
     
+    // 照片的压缩质量
+    public var photoQuality: CGFloat = 0.7
+    
     // 视频质量
     public var videoQuality = VideoQuality.p720
     
@@ -146,7 +149,7 @@ public class CameraViewConfiguration {
     public var videoMaxDuration: Int = 10000
     
     // 拍摄模式
-    public var captureMode = CaptureMode.video
+    public var captureMode = CaptureMode.photo_video
     
     public init() { }
     

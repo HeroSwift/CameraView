@@ -818,16 +818,14 @@ extension CameraManager {
     }
     
     // 把图片保存到磁盘
-    func saveToDisk(image: UIImage, compressionQuality: CGFloat = 0.7) -> String? {
+    func saveToDisk(image: UIImage, compressionQuality: CGFloat = 0.7, callback: (String, Int) -> Void) {
 
         if let imageData = image.jpegData(compressionQuality: compressionQuality) as NSData? {
             let filePath = getFilePath(dirname: configuration.photoDir, extname: ".jpeg")
             if imageData.write(toFile: filePath, atomically: true) {
-                return filePath
+                callback(filePath, imageData.length)
             }
         }
-        
-        return nil
         
     }
     

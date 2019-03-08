@@ -3,7 +3,19 @@ import UIKit
 
 public class CameraView: UIView {
     
-    var delegate: CameraViewDelegate!
+    var onExit: (() -> Void)?
+    
+    var onCapturePhoto: ((String, Int, Int, Int) -> Void)?
+    
+    var onRecordVideo: ((String, Int, Int, String, Int, Int, Int) -> Void)?
+    
+    var onPermissionsGranted: (() -> Void)?
+    
+    var onPermissionsDenied: (() -> Void)?
+    
+    var onCaptureWithoutPermissions: (() -> Void)?
+
+    var onRecordDurationLessThanMinDuration: (() -> Void)?
     
     //
     // MARK: - 拍摄界面
@@ -82,19 +94,19 @@ public class CameraView: UIView {
         }
         
         cameraManager.onPermissionsGranted = {
-            self.delegate.cameraViewDidPermissionsGranted(self)
+            self.onPermissionsGranted?()
         }
         
         cameraManager.onPermissionsDenied = {
-            self.delegate.cameraViewDidPermissionsDenied(self)
+            self.onPermissionsDenied?()
         }
         
         cameraManager.onCaptureWithoutPermissions = {
-            self.delegate.cameraViewWillCaptureWithoutPermissions(self)
+            self.onCaptureWithoutPermissions?()
         }
         
         cameraManager.onRecordVideoDurationLessThanMinDuration = {
-            self.delegate.cameraViewDidRecordDurationLessThanMinDuration(self)
+            self.onRecordDurationLessThanMinDuration?()
         }
         
         cameraManager.onFinishCapturePhoto = { (photo, error) in
@@ -355,7 +367,7 @@ extension CameraView {
         ])
         
         exitButton.onClick = {
-            self.delegate.cameraViewDidExit(self)
+            self.onExit?()
         }
         
     }
@@ -471,10 +483,40 @@ extension CameraView {
 }
 
 //
-// MARK: - 录制视频的定时器
+// MARK: - 私有方法
 //
 
 extension CameraView {
+    
+    private func submit() {
+        
+        let photoQuality = configuration.photoQuality
+        
+        if let photo = cameraManager.photo {
+            // 保存图片
+            cameraManager.saveToDisk(image: photo, compressionQuality: photoQuality) { path, size in
+                self.onCapturePhoto?(path, size, Int(photo.size.width), Int(photo.size.height))
+            }
+        }
+        else if let photo = cameraManager.getVideoFirstFrame(videoPath: cameraManager.videoPath) {
+            guard let videoData = NSData(contentsOfFile: cameraManager.videoPath) else {
+                return
+            }
+            // 保存视频截图
+            cameraManager.saveToDisk(image: photo, compressionQuality: photoQuality) { path, size in
+                self.onRecordVideo?(
+                    cameraManager.videoPath,
+                    videoData.length,
+                    cameraManager.videoDuration,
+                    path,
+                    size,
+                    Int(photo.size.width),
+                    Int(photo.size.height)
+                )
+            }
+        }
+        
+    }
     
     @objc private func onGuideLabelFadeOut() {
         
@@ -571,30 +613,7 @@ extension CameraView: CircleViewDelegate {
         }
         else if circleView == submitButton {
             hidePreviewView()
-            if let photo = cameraManager.photo {
-                // 保存图片
-                if let photoPath = cameraManager.saveToDisk(image: photo) {
-                    delegate.cameraViewDidPickPhoto(
-                        self,
-                        photoPath: photoPath,
-                        photoWidth: photo.size.width,
-                        photoHeight: photo.size.height
-                    )
-                }
-            }
-            else if let photo = cameraManager.getVideoFirstFrame(videoPath: cameraManager.videoPath) {
-                // 保存视频截图
-                if let photoPath = cameraManager.saveToDisk(image: photo) {
-                    delegate.cameraViewDidPickVideo(
-                        self,
-                        videoPath: cameraManager.videoPath,
-                        videoDuration: cameraManager.videoDuration,
-                        photoPath: photoPath,
-                        photoWidth: photo.size.width,
-                        photoHeight: photo.size.height
-                    )
-                }
-            }
+            submit()
         }
     }
     

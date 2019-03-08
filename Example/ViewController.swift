@@ -41,12 +41,18 @@ class ViewController: UIViewController {
 
 extension ViewController: CameraViewDelegate {
     
-    public func cameraViewDidExit(_ cameraView: CameraView) {
-        cameraViewController?.dismiss(animated: true, completion: nil)
+    func cameraViewDidExit(_ viewController: CameraViewController) {
+        viewController.dismiss(animated: true, completion: nil)
     }
     
-    public func cameraViewDidPickVideo(_ cameraView: CameraView, videoPath: String, videoDuration: Int, photoPath: String, photoWidth: CGFloat, photoHeight: CGFloat) {
-        print("\(videoPath) \(videoDuration) \(photoPath) \(photoWidth) \(photoHeight)")
+    func cameraViewDidRecordVideo(_ viewController: CameraViewController, videoPath: String, videoSize: Int, videoDuration: Int, photoPath: String, photoSize: Int, photoWidth: Int, photoHeight: Int) {
+        print("video: \(videoPath) \(Float(videoSize)/(1024*1024)) \(videoDuration)")
+        print("photo: \(photoPath) \(Float(photoSize)/(1024*1024)) \(photoWidth) \(photoHeight)")
     }
+    
+    func cameraViewDidCapturePhoto(_ viewController: CameraViewController, photoPath: String, photoSize: Int, photoWidth: Int, photoHeight: Int) {
+        print("photo: \(photoPath) \(photoSize/(1024*1024)) \(photoWidth) \(photoHeight)")
+    }
+    
 }
 
