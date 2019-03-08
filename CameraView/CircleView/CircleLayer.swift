@@ -39,7 +39,6 @@ public class CircleLayer: CALayer {
     
     override init() {
         super.init()
-        
     }
     
     override init(layer: Any) {
@@ -112,7 +111,6 @@ public class CircleLayer: CALayer {
     }
     
     public override func action(forKey event: String) -> CAAction? {
-        
         if event == #keyPath(CircleLayer.trackValue) {
             let anim = CABasicAnimation(keyPath: #keyPath(CircleLayer.trackValue))
             anim.byValue = 0.01

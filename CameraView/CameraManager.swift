@@ -271,7 +271,7 @@ extension CameraManager {
     
     func switchToFrontCamera() throws {
         
-        try configureSession { isRunning in
+        try configureSession { _ in
             
             guard let device = frontCamera else {
                 throw CameraError.invalidOperation
@@ -283,7 +283,10 @@ extension CameraManager {
             
             frontCameraInput = try addInput(device: device)
             
-            captureSession.sessionPreset = captureSession.canSetSessionPreset(configuration.preset) ? configuration.preset : .high
+            // 拍照和录视频的预设必须一致
+            // 否则切换预设时，预览画面的尺寸会变化
+            let preset = getVideoPreset(videoQuality: configuration.videoQuality)
+            captureSession.sessionPreset = captureSession.canSetSessionPreset(preset) ? preset : .high
             
             flashMode = .off
             zoomFactor = 1
@@ -295,7 +298,7 @@ extension CameraManager {
     
     func switchToBackCamera() throws {
         
-        try configureSession { isRunning in
+        try configureSession { _ in
             
             guard let device = backCamera else {
                 throw CameraError.invalidOperation
@@ -307,7 +310,8 @@ extension CameraManager {
             
             backCameraInput = try addInput(device: device)
             
-            captureSession.sessionPreset = captureSession.canSetSessionPreset(configuration.preset) ? configuration.preset : .high
+            let preset = getVideoPreset(videoQuality: configuration.videoQuality)
+            captureSession.sessionPreset = captureSession.canSetSessionPreset(preset) ? preset : .high
             
             flashMode = .off
             zoomFactor = 1
@@ -671,6 +675,19 @@ extension CameraManager {
             captureSession.removeInput(input)
         }
         
+    }
+    
+    private func getVideoPreset(videoQuality: VideoQuality) -> AVCaptureSession.Preset {
+        switch videoQuality {
+        case .p720:
+            return AVCaptureSession.Preset.hd1280x720
+        case .p1080:
+            return AVCaptureSession.Preset.hd1920x1080
+        case .p2160:
+            return AVCaptureSession.Preset.hd4K3840x2160
+        default:
+            return AVCaptureSession.Preset.vga640x480
+        }
     }
     
     func getVideoOrientation(deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
