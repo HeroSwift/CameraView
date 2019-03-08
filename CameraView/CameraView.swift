@@ -120,18 +120,18 @@ public class CameraView: UIView {
         }
         
         cameraManager.onFinishRecordVideo = { (videoPath, error) in
+            
             if let error = error {
                 print(error.localizedDescription)
             }
             else if let videoPath = videoPath {
                 self.showPreviewView()
                 self.previewView.video = videoPath
+                return
             }
             
-            self.captureButton.layer.removeAnimation(forKey: #keyPath(CircleLayer.trackValue))
-            self.captureButton.centerRadius = self.configuration.captureButtonCenterRadiusNormal
-            self.captureButton.ringWidth = self.configuration.captureButtonRingWidthNormal
-            self.captureButton.trackValue = 0
+            self.showControls()
+            
         }
         
         addCaptureView()
@@ -154,14 +154,14 @@ public class CameraView: UIView {
                 
                 self.flashButton.alpha = 0
                 self.flipButton.alpha = 0
-                self.captureButton.alpha = 0
                 self.exitButton.alpha = 0
+                self.captureButton.alpha = 0
             },
             completion: { _ in
                 self.flashButton.isHidden = true
                 self.flipButton.isHidden = true
-                self.captureButton.isHidden = true
                 self.exitButton.isHidden = true
+                self.captureButton.isHidden = true
             }
         )
         
@@ -184,8 +184,8 @@ public class CameraView: UIView {
                 
                 self.flashButton.alpha = 1
                 self.flipButton.alpha = 1
-                self.captureButton.alpha = 1
                 self.exitButton.alpha = 1
+                self.captureButton.alpha = 1
             },
             completion: nil
         )
@@ -193,8 +193,8 @@ public class CameraView: UIView {
         captureView.isHidden = false
         flashButton.isHidden = false
         flipButton.isHidden = false
-        captureButton.isHidden = false
         exitButton.isHidden = false
+        captureButton.isHidden = false
         
         previewView.isHidden = true
         
@@ -518,6 +518,57 @@ extension CameraView {
         
     }
     
+    private func startRecordVideo() {
+        
+        cameraManager.startRecordVideo()
+        
+        if cameraManager.isVideoRecording {
+            
+            captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
+            captureButton.ringWidth = configuration.captureButtonRingWidthRecording
+            captureButton.trackValue = 0
+            
+            progressAnimation = CABasicAnimation(keyPath: #keyPath(CircleLayer.trackValue))
+            progressAnimation.fromValue = 0.0
+            progressAnimation.toValue = 1.0
+            progressAnimation.delegate = self
+            progressAnimation.duration = Double(configuration.videoMaxDuration) / 1000
+            captureButton.layer.add(progressAnimation, forKey: #keyPath(CircleLayer.trackValue))
+            
+            hideControls()
+            
+        }
+        
+    }
+    
+    private func stopRecordVideo() {
+        
+        guard cameraManager.isVideoRecording else {
+            return
+        }
+        
+        cameraManager.stopRecordVideo()
+        
+        captureButton.layer.removeAnimation(forKey: #keyPath(CircleLayer.trackValue))
+        
+        captureButton.centerRadius = configuration.captureButtonCenterRadiusNormal
+        captureButton.ringWidth = configuration.captureButtonRingWidthNormal
+        captureButton.trackValue = 0
+
+    }
+    
+    private func showControls() {
+        flipButton.isHidden = false
+        flashButton.isHidden = false
+        exitButton.isHidden = false
+    }
+    
+    private func hideControls() {
+        flipButton.isHidden = true
+        flashButton.isHidden = true
+        exitButton.isHidden = true
+    }
+    
     @objc private func onGuideLabelFadeOut() {
         
         // 引导文字淡出消失
@@ -546,27 +597,13 @@ extension CameraView: CircleViewDelegate {
     public func circleViewDidLongPressStart(_ circleView: CircleView) {
         if circleView == captureButton && configuration.captureMode != .photo {
             // 长按触发录制视频
-            cameraManager.startRecordVideo()
-            if cameraManager.isVideoRecording {
-                
-                captureButton.centerRadius = configuration.captureButtonCenterRadiusRecording
-                captureButton.ringWidth = configuration.captureButtonRingWidthRecording
-                captureButton.trackValue = 0
-                
-                progressAnimation = CABasicAnimation(keyPath: #keyPath(CircleLayer.trackValue))
-                progressAnimation.fromValue = 0.0
-                progressAnimation.toValue = 1.0
-                progressAnimation.delegate = self
-                progressAnimation.duration = Double(configuration.videoMaxDuration) / 1000
-                captureButton.layer.add(progressAnimation, forKey: #keyPath(CircleLayer.trackValue))
-                
-            }
+            startRecordVideo()
         }
     }
     
     public func circleViewDidLongPressEnd(_ circleView: CircleView) {
-        if circleView == captureButton && cameraManager.isVideoRecording {
-            cameraManager.stopRecordVideo()
+        if circleView == captureButton {
+            stopRecordVideo()
         }
     }
     
@@ -623,9 +660,7 @@ extension CameraView: CAAnimationDelegate {
     
     // 这里只能这样写，否则动画结束时不会调这里
     @objc func animationDidStop(_ anim: CAAnimation, finished flag: Bool) {
-        if cameraManager.isVideoRecording {
-            cameraManager.stopRecordVideo()
-        }
+        stopRecordVideo()
     }
     
 }
