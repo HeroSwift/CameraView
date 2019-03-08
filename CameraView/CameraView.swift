@@ -509,7 +509,7 @@ extension CameraView {
 extension CameraView: CircleViewDelegate {
 
     public func circleViewDidLongPressStart(_ circleView: CircleView) {
-        if circleView == captureButton {
+        if circleView == captureButton && configuration.captureMode != .photo {
             // 长按触发录制视频
             cameraManager.startRecordVideo()
             if cameraManager.isVideoRecording {
@@ -568,7 +568,10 @@ extension CameraView: CircleViewDelegate {
         }
         
         if circleView == captureButton {
-            cameraManager.capturePhoto()
+            // 纯视频拍摄需要长按
+            if configuration.captureMode != .video {
+                cameraManager.capturePhoto()
+            }
         }
         else if circleView == cancelButton {
             hidePreviewView()

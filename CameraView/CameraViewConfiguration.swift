@@ -136,9 +136,6 @@ public class CameraViewConfiguration {
     // 视频保存的目录
     public var videoDir = NSTemporaryDirectory()
     
-    // 视频文件扩展名
-    public var videoExtname = ".mp4"
-    
     // 视频质量
     public var videoQuality = VideoQuality.p720
     
@@ -147,6 +144,9 @@ public class CameraViewConfiguration {
     
     // 视频最大录制时长
     public var videoMaxDuration: Int = 10000
+    
+    // 拍摄模式
+    public var captureMode = CaptureMode.video
     
     public init() { }
     

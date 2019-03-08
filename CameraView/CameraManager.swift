@@ -75,6 +75,8 @@ class CameraManager : NSObject {
     // 当前正在录制的视频文件路径
     var videoPath = ""
     
+    var videoExtname = ".mp4"
+    
     // 录制完成后视频的时长
     var videoDuration: Int = 0
     
@@ -251,7 +253,7 @@ extension CameraManager {
         // 重置
         photo = nil
         
-        videoPath = getFilePath(dirname: configuration.videoDir, extname: configuration.videoExtname)
+        videoPath = getFilePath(dirname: configuration.videoDir, extname: videoExtname)
         
         output.startRecording(to: URL(fileURLWithPath: videoPath), recordingDelegate: self)
         
