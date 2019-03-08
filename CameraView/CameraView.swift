@@ -45,8 +45,6 @@ public class CameraView: UIView {
     
     private var cameraIsReady = false
     
-    private var cameraIsCapturing = false
-
     public convenience init(configuration: CameraViewConfiguration) {
         self.init()
         self.configuration = configuration
@@ -65,7 +63,6 @@ public class CameraView: UIView {
                 orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
             )
             self.cameraIsReady = true
-            self.cameraIsCapturing = true
         }
         
         cameraManager.onFlashModeChange = {
@@ -159,8 +156,6 @@ public class CameraView: UIView {
         previewView.isHidden = false
         captureView.isHidden = true
         
-        cameraIsCapturing = false
-        
     }
     
     private func hidePreviewView() {
@@ -194,8 +189,6 @@ public class CameraView: UIView {
         previewView.image = nil
         previewView.video = ""
         
-        cameraIsCapturing = true
-        
     }
     
     public func requestPermissions() -> Bool {
@@ -227,7 +220,7 @@ extension CameraView {
         captureView.translatesAutoresizingMaskIntoConstraints = false
         
         captureView.onFocusPointChange = {
-            guard self.cameraIsReady, self.cameraIsCapturing else {
+            guard self.cameraIsReady else {
                 return
             }
             do {
