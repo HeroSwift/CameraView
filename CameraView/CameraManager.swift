@@ -544,8 +544,8 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
             onFinishCapturePhoto?(nil, error)
         }
         else if let buffer = photoSampleBuffer,
-            let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer, previewPhotoSampleBuffer: nil),
-            let photo = UIImage(data: data) {
+            let data = AVCapturePhotoOutput.jpegPhotoDataRepresentation(forJPEGSampleBuffer: buffer, previewPhotoSampleBuffer: nil) {
+            let photo = outputPhoto(data: data)
             self.photo = photo
             onFinishCapturePhoto?(photo, nil)
         }
@@ -692,6 +692,17 @@ extension CameraManager {
         }
     }
     
+    private func outputPhoto(data: Data?) -> UIImage {
+        
+        let dataProvider = CGDataProvider(data: data! as CFData)
+        let cgImageRef = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+        
+        // Set proper orientation for photo
+        // If camera is currently set to front camera, flip image
+        return UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: getImageOrientation(deviceOrientation: deviceOrientation))
+        
+    }
+    
     func getVideoOrientation(deviceOrientation: UIDeviceOrientation) -> AVCaptureVideoOrientation {
         
         switch deviceOrientation {
@@ -775,22 +786,17 @@ extension CameraManager {
             
             output.captureStillImageAsynchronously(from: connection) { (sampleBuffer, error) in
                 if let sampleBuffer = sampleBuffer {
-                    let imageData = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
-                    let dataProvider = CGDataProvider(data: imageData! as CFData)
-                    let cgImageRef = CGImage(jpegDataProviderSource: dataProvider!, decode: nil, shouldInterpolate: true, intent: CGColorRenderingIntent.defaultIntent)
+                    let data = AVCaptureStillImageOutput.jpegStillImageNSDataRepresentation(sampleBuffer)
+                    let photo = self.outputPhoto(data: data)
                     
-                    // Set proper orientation for photo
-                    // If camera is currently set to front camera, flip image
-                    let photo = UIImage(cgImage: cgImageRef!, scale: 1.0, orientation: self.getImageOrientation(deviceOrientation: self.deviceOrientation))
                     self.photo = photo
-                    
                     self.onFinishCapturePhoto?(photo, nil)
-
                 }
             }
         }
         
     }
+
 }
 
 extension CameraManager {
