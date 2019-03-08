@@ -139,10 +139,10 @@ public class CameraViewConfiguration {
     // 视频质量
     public var videoQuality = VideoQuality.p720
     
-    // 视频最短录制时长
+    // 视频最短录制时长，单位是毫秒
     public var videoMinDuration: Int = 1000
     
-    // 视频最大录制时长
+    // 视频最大录制时长，单位是毫秒
     public var videoMaxDuration: Int = 10000
     
     // 拍摄模式
