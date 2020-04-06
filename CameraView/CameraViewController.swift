@@ -3,8 +3,8 @@ import UIKit
 
 public class CameraViewController: UIViewController {
     
-    public var configuration: CameraViewConfiguration!
-    public var delegate: CameraViewDelegate!
+    @objc public var configuration: CameraViewConfiguration!
+    @objc public var delegate: CameraViewDelegate!
     
     private var cameraView: CameraView!
     
@@ -27,20 +27,9 @@ public class CameraViewController: UIViewController {
         cameraView.onRecordVideo = { videoPath, videoSize, videoDuration, photoPath, photoSize, photoWidth, photoHeight in
             self.delegate.cameraViewDidRecordVideo(self, videoPath: videoPath, videoSize: videoSize, videoDuration: videoDuration, photoPath: photoPath, photoSize: photoSize, photoWidth: photoWidth, photoHeight: photoHeight)
         }
-        cameraView.onPermissionsGranted = {
-            self.delegate.cameraViewDidPermissionsGranted(self)
-        }
-        cameraView.onPermissionsDenied = {
-            self.delegate.cameraViewDidPermissionsDenied(self)
-        }
-        cameraView.onPermissionsNotGranted = {
-            self.delegate.cameraViewDidPermissionsNotGranted(self)
-        }
         cameraView.onRecordDurationLessThanMinDuration = {
             self.delegate.cameraViewDidRecordDurationLessThanMinDuration(self)
         }
-        
-        cameraView.requestPermissions()
         
         view.backgroundColor = .black
         view.addSubview(cameraView)
@@ -59,6 +48,14 @@ public class CameraViewController: UIViewController {
         else {
             cameraView.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: view.frame.height)
         }
+    }
+    
+    @objc public func show() {
+
+        DispatchQueue.main.async {
+            UIApplication.shared.keyWindow?.rootViewController?.present(self, animated: true, completion: nil)
+        }
+        
     }
     
 }

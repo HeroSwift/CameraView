@@ -9,12 +9,6 @@ public class CameraView: UIView {
     
     var onRecordVideo: ((String, Int, Int, String, Int, Int, Int) -> Void)?
     
-    var onPermissionsGranted: (() -> Void)?
-    
-    var onPermissionsDenied: (() -> Void)?
-    
-    var onPermissionsNotGranted: (() -> Void)?
-
     var onRecordDurationLessThanMinDuration: (() -> Void)?
     
     //
@@ -54,9 +48,7 @@ public class CameraView: UIView {
     private var cameraManager = CameraManager()
     
     private var progressAnimation: CABasicAnimation!
-    
-    private var cameraIsReady = false
-    
+   
     public convenience init(configuration: CameraViewConfiguration) {
         self.init()
         
@@ -76,14 +68,6 @@ public class CameraView: UIView {
         
         backgroundColor = .clear
         
-        cameraManager.onDeviceReady = {
-            self.captureView.bind(
-                session: self.cameraManager.captureSession,
-                orientation: self.cameraManager.getVideoOrientation(deviceOrientation: self.cameraManager.deviceOrientation)
-            )
-            self.cameraIsReady = true
-        }
-        
         cameraManager.onFlashModeChange = {
             
             switch self.cameraManager.flashMode {
@@ -98,18 +82,6 @@ public class CameraView: UIView {
                 break
             }
             
-        }
-        
-        cameraManager.onPermissionsGranted = {
-            self.onPermissionsGranted?()
-        }
-        
-        cameraManager.onPermissionsDenied = {
-            self.onPermissionsDenied?()
-        }
-        
-        cameraManager.onPermissionsNotGranted = {
-            self.onPermissionsNotGranted?()
         }
         
         cameraManager.onRecordVideoDurationLessThanMinDuration = {
@@ -143,6 +115,11 @@ public class CameraView: UIView {
         
         addCaptureView()
         addPreviewView()
+        
+        captureView.bind(
+            session: cameraManager.captureSession,
+            orientation: cameraManager.getVideoOrientation(deviceOrientation: cameraManager.deviceOrientation)
+        )
         
     }
     
@@ -209,11 +186,7 @@ public class CameraView: UIView {
         previewView.video = ""
         
     }
-    
-    public func requestPermissions() -> Bool {
-        return cameraManager.requestPermissions()
-    }
-    
+
     public override func layoutSubviews() {
         
         let currentDevice = UIDevice.current
@@ -239,9 +212,6 @@ extension CameraView {
         captureView.translatesAutoresizingMaskIntoConstraints = false
         
         captureView.onFocusPointChange = {
-            guard self.cameraIsReady else {
-                return
-            }
             do {
                 if try self.cameraManager.focus(point: $1) {
                     self.captureView.moveFocusView(to: $0)
@@ -497,11 +467,9 @@ extension CameraView {
     
     private func submit() {
         
-        let photoQuality = configuration.photoQuality
-        
         if let photo = cameraManager.photo {
             // 保存图片
-            cameraManager.saveToDisk(image: photo, compressionQuality: photoQuality) { path, size in
+            cameraManager.saveToDisk(image: photo) { path, size in
                 self.onCapturePhoto?(path, size, Int(photo.size.width), Int(photo.size.height))
             }
         }
@@ -510,7 +478,7 @@ extension CameraView {
                 return
             }
             // 保存视频截图
-            cameraManager.saveToDisk(image: photo, compressionQuality: photoQuality) { path, size in
+            cameraManager.saveToDisk(image: photo) { path, size in
                 self.onRecordVideo?(
                     cameraManager.videoPath,
                     videoData.length,
