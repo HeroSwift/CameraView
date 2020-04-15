@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import AVFoundation
 import CameraView
 
 class ViewController: UIViewController {
@@ -16,8 +17,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-
         
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            
+        }
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,6 +29,20 @@ class ViewController: UIViewController {
     }
 
     @IBAction func openCamera(_ sender: Any) {
+        
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            print("authorized")
+            break
+            
+        case .notDetermined:
+            print("notDetermined")
+            break
+            
+        default:
+            print("notDetermined")
+            break
+        }
         
         let cameraViewController = CameraViewController()
         cameraViewController.configuration = CameraViewConfiguration()
@@ -41,17 +58,25 @@ class ViewController: UIViewController {
 
 extension ViewController: CameraViewDelegate {
     
+    // 点击退出按钮
     func cameraViewDidExit(_ viewController: CameraViewController) {
         viewController.dismiss(animated: true, completion: nil)
     }
+
+    // 点击确定按钮选择照片
+    func cameraViewDidCapturePhoto(_ viewController: CameraViewController, photoPath: String, photoSize: Int, photoWidth: Int, photoHeight: Int) {
+        print("photo: \(photoPath) \(photoSize/(1024*1024)) \(photoWidth) \(photoHeight)")
+    }
     
+    // 点击确定按钮选择视频
     func cameraViewDidRecordVideo(_ viewController: CameraViewController, videoPath: String, videoSize: Int, videoDuration: Int, photoPath: String, photoSize: Int, photoWidth: Int, photoHeight: Int) {
         print("video: \(videoPath) \(Float(videoSize)/(1024*1024)) \(videoDuration)")
         print("photo: \(photoPath) \(Float(photoSize)/(1024*1024)) \(photoWidth) \(photoHeight)")
     }
     
-    func cameraViewDidCapturePhoto(_ viewController: CameraViewController, photoPath: String, photoSize: Int, photoWidth: Int, photoHeight: Int) {
-        print("photo: \(photoPath) \(photoSize/(1024*1024)) \(photoWidth) \(photoHeight)")
+    // 录制视频时间太短
+    func cameraViewDidRecordDurationLessThanMinDuration(_ viewController: CameraViewController) {
+        
     }
     
 }
